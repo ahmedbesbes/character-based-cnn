@@ -1,2 +1,4 @@
+.gitignore
 notebooks/
 .ipynb_checkpoints/
+data/
