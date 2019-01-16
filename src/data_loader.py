@@ -1,25 +1,31 @@
 import json
 import numpy as np
 from torch.utils.data import Dataset
+import pandas as pd
+from tqdm import tqdm
 import utils
+
 
 class MyDataset(Dataset):
     def __init__(self, config_path='../config.json'):
-        
-        with open(config_path) as f: 
+
+        with open(config_path) as f:
             self.config = json.load(f)
 
         self.data_path = self.config['data']['path']
         self.vocabulary = list(self.config['data']['alphabet'])
         self.max_length = self.config['max_length']
         self.num_classes = self.config['num_of_classes']
-
+        self.preprocessing_steps = self.config['data']['preprocessing_steps']
         self.identity_mat = np.identity(len(self.vocabulary))
         texts, labels = [], []
 
-        # chunk your dataframes in small portions 
-        for df_chunk in pd.read_csv(self.data_path, chunksize=self.config['chunksize'], encoding=self.config['encoding']):
-            df_chunk['processed_text']  = df_chunk[self.config['data']['text_column']].map(utils.process_text)
+        # chunk your dataframes in small portions
+        chunks = pd.read_csv(
+            self.data_path, chunksize=self.config['chunksize'], encoding=self.config['encoding'], nrows=self.config['data']['max_rows'])
+        for df_chunk in tqdm(chunks):
+            df_chunk['processed_text'] = df_chunk[self.config['data']
+                                                  ['text_column']].map(utils.process_text)
             texts += df_chunk['processed_text'].tolist()
             labels += df_chunk[self.config['label_column']].tolist()
 
@@ -40,6 +46,7 @@ class MyDataset(Dataset):
             data = np.concatenate(
                 (data, np.zeros((self.max_length - len(data), len(self.vocabulary)), dtype=np.float32)))
         elif len(data) == 0:
-            data = np.zeros((self.max_length, len(self.vocabulary)), dtype=np.float32)
+            data = np.zeros((self.max_length, len(
+                self.vocabulary)), dtype=np.float32)
         label = self.labels[index]
         return data, label
