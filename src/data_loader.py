@@ -7,13 +7,17 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, config_path='../config.json'):
+    def __init__(self, config_path, train=True):
 
         with open(config_path) as f:
             self.config = json.load(f)
 
-        self.data_path = self.config['data']['path']
-        self.vocabulary = list(self.config['data']['alphabet'])
+        if train:
+            self.data_path = self.config['data']['path']['train']
+        else:
+            self.data_path = self.config['data']['path']['val']
+
+        self.vocabulary = list(self.config['alphabet'])
         self.max_length = self.config['max_length']
         self.num_classes = self.config['num_of_classes']
         self.preprocessing_steps = self.config['data']['preprocessing_steps']
@@ -21,13 +25,17 @@ class MyDataset(Dataset):
         texts, labels = [], []
 
         # chunk your dataframes in small portions
-        chunks = pd.read_csv(
-            self.data_path, chunksize=self.config['chunksize'], encoding=self.config['encoding'], nrows=self.config['data']['max_rows'])
+        chunks = pd.read_csv(self.data_path,
+                             chunksize=self.config['data']['chunksize'],
+                             encoding=self.config['data']['encoding'],
+                             nrows=self.config['data']['max_rows'])
         for df_chunk in tqdm(chunks):
-            df_chunk['processed_text'] = df_chunk[self.config['data']
-                                                  ['text_column']].map(utils.process_text)
+            df_chunk['processed_text'] = (df_chunk[self.config['data']['text_column']]
+                                            .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
             texts += df_chunk['processed_text'].tolist()
-            labels += df_chunk[self.config['label_column']].tolist()
+            labels += df_chunk[self.config['data']['label_column']].tolist()
+        
+        print('data loaded successfully with {0} rows'.format(len(labels)))
 
         self.texts = texts
         self.labels = labels
