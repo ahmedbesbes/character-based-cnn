@@ -69,6 +69,5 @@ class CharacterLevelCNN(nn.Module):
 
         # forward pass through fc layers
         for i in range(len(self.fc_layers)):
-            print('fc layer', i)
             output = self.fc_layers[i](output)
         return output
