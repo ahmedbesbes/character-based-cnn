@@ -46,6 +46,8 @@
         "text_column": "",
         "label_column": "",
         "encoding": "utf-8",
-        "chunksize": 50000
+        "chunksize": 50000,
+        "max_rows": 1000,
+        "preprocessing_steps": ["remove_hashtags", "remove_urls", "remove_user_mentions"]
     }
 }
