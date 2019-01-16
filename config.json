@@ -50,7 +50,7 @@
         "label_column": "Sentiment",
         "encoding": null,
         "chunksize": 50000,
-        "max_rows": 50000,
+        "max_rows": 100000,
         "preprocessing_steps": ["remove_hashtags", "remove_urls", "remove_user_mentions"]
     },
     "training": {

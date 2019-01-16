@@ -9,10 +9,77 @@ from torch.utils.data import DataLoader
 from cnn_model import CharacterLevelCNN
 from data_loader import MyDataset
 
+from tqdm import tqdm
 import utils
 
 
-def train(config_path='../config.json'):
+def train(model, training_generator, optimizer, criterion, epoch, print_every=100):
+    model.train()
+    losses = []
+    accuraries = []
+    num_iter_per_epoch = len(training_generator)
+    for iter, batch in enumerate(training_generator):
+        features, labels = batch
+        if torch.cuda.is_available():
+            features = features.cuda()
+            labels = labels.cuda()
+        optimizer.zero_grad()
+        predictions = model(features)
+        loss = criterion(predictions, labels)
+        loss.backward()
+        optimizer.step()
+        training_metrics = utils.get_evaluation(labels.cpu().numpy(),
+                                                predictions.cpu().detach().numpy(),
+                                                list_metrics=["accuracy"])
+
+        if iter % print_every == 0:
+            print("[Training] Epoch: {}, Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
+                epoch + 1,
+                iter + 1,
+                num_iter_per_epoch,
+                loss,
+                training_metrics["accuracy"]))
+
+        losses.append(loss)
+        accuraries.append(training_metrics["accuracy"])
+    return np.mean(losses), np.mean(accuraries)
+
+
+def eval(model, validation_generator, criterion, epoch, print_every=100):
+    model.eval()
+    losses = []
+    accuraries = []
+    num_iter_per_epoch = len(validation_generator)
+
+    for batch in validation_generator:
+        features, labels = batch
+        if torch.cuda.is_available():
+            features = features.cuda()
+            labels = labels.cuda()
+        with torch.no_grad():
+            predictions = model(features)
+        loss = criterion(predictions, labels)
+        losses.append(loss)
+
+        validation_metrics = utils.get_evaluation(labels.cpu().numpy(),
+                                                  predictions.cpu().detach().numpy(),
+                                                  list_metrics=["accuracy"])
+        accuracy = validation_metrics['accuracy']
+
+        accuraries.append(accuracy)
+
+        if iter % print_every == 0:
+            print("[Validation] Epoch: {}, Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
+                epoch + 1,
+                iter + 1,
+                num_iter_per_epoch,
+                loss,
+                validation_metrics["accuracy"]))
+
+    return np.mean(losses), np.mean(accuraries)
+
+
+def run(config_path='../config.json'):
 
     with open(config_path) as f:
         config = json.load(f)
@@ -41,62 +108,20 @@ def train(config_path='../config.json'):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
-    model.train()
-    num_iter_per_epoch = len(training_generator)
-
     for epoch in range(epochs):
-        for iter, batch in enumerate(training_generator):
-            features, labels = batch
-            if torch.cuda.is_available():
-                features = features.cuda()
-                labels = labels.cuda()
-            optimizer.zero_grad()
-            predictions = model(features)
-            loss = criterion(predictions, labels)
-            loss.backward()
-            optimizer.step()
+        training_loss, training_accuracy = train(model,
+                                                 training_generator,
+                                                 optimizer,
+                                                 criterion,
+                                                 epoch)
 
-            training_metrics = utils.get_evaluation(labels.cpu().numpy(),
-                                                    predictions.cpu().detach().numpy(),
-                                                    list_metrics=["accuracy"])
-
-            print("Epoch: {}/{}, Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
-                epoch + 1,
-                epochs,
-                iter + 1,
-                num_iter_per_epoch,
-                loss,
-                training_metrics["accuracy"]))
-
-        model.eval()
-
-        val_loss_list = []
-        val_label_list = []
-        val_pred_list = []
-        for batch in validation_generator:
-            val_features, val_labels = batch
-            if torch.cuda.is_available():
-                val_features = val_features.cuda()
-                val_labels = val_labels.cuda()
-            with torch.no_grad():
-                val_predictions = model(val_features)
-            val_loss = criterion(val_predictions, val_labels)
-            val_loss_list.append(val_loss)
-            val_label_list.extend(val_labels.clone().cpu())
-            val_pred_list.append(val_predictions.clone().cpu())
-
-        average_validation_loss = np.mean(val_loss_list)
-        val_preds = torch.cat(val_pred_list, 0)
-        val_labels = np.array(val_label_list)
-        validation_metrics = utils.get_evaluation(
-            val_labels, val_preds.numpy(), list_metrics=["accuracy", "confusion_matrix"])
-
-        print("Epoch: {}/{}, Loss: {}, Accuracy: {}".format(
-            epoch + 1,
-            epochs,
-            average_validation_loss,
-            validation_metrics["accuracy"]))
+        validation_loss, validation_accuracy = eval(model,
+                                                    validation_generator,
+                                                    criterion,
+                                                    epoch)
+        print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
+              format(epoch+1, epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
 
 
 if __name__ == "__main__":
-    train()
+    run()
