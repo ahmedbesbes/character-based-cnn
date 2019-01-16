@@ -1,6 +1,6 @@
 {
     "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}\n",
-    "max_length": 1014,
+    "max_length": 140,
     "num_of_classes": 2,
     "model_parameters": {
         "name": "small",
@@ -42,12 +42,21 @@
         ]
     },
     "data": {
-        "path": "",
-        "text_column": "",
-        "label_column": "",
-        "encoding": "utf-8",
+        "path": {
+            "train": "D:\\Users\\abesbes\\Desktop\\zeus\\character-based-cnn\\data\\train.csv",
+            "val": "D:\\Users\\abesbes\\Desktop\\zeus\\character-based-cnn\\data\\validation.csv"
+        },
+        "text_column": "SentimentText",
+        "label_column": "Sentiment",
+        "encoding": null,
         "chunksize": 50000,
-        "max_rows": 1000,
+        "max_rows": 50000,
         "preprocessing_steps": ["remove_hashtags", "remove_urls", "remove_user_mentions"]
+    },
+    "training": {
+        "batch_size": 128,
+        "epochs": 10,
+        "criterion": null,
+        "optimizer": null 
     }
 }
