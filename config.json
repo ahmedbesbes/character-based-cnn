@@ -1,0 +1,51 @@
+{
+    "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}\n",
+    "max_length": 1014,
+    "num_of_classes": 2,
+    "model_parameters": {
+        "name": "small",
+        "conv": [
+            [
+                256,
+                7,
+                3
+            ],
+            [
+                256,
+                7,
+                3
+            ],
+            [
+                256,
+                3,
+                -1
+            ],
+            [
+                256,
+                3,
+                -1
+            ],
+            [
+                256,
+                3,
+                -1
+            ],
+            [
+                256,
+                3,
+                3
+            ]
+        ],
+        "fc": [
+            1024,
+            1024
+        ]
+    },
+    "data": {
+        "path": "",
+        "text_column": "",
+        "label_column": "",
+        "encoding": "utf-8",
+        "chunksize": 50000
+    }
+}
