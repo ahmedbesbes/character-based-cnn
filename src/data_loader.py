@@ -21,7 +21,7 @@ class MyDataset(Dataset):
         self.max_length = self.config['max_length']
         self.num_classes = self.config['num_of_classes']
         self.preprocessing_steps = self.config['data']['preprocessing_steps']
-        self.identity_mat = np.identity(len(self.vocabulary))
+        self.identity_mat = np.identity(self.config['number_of_characters'])
         texts, labels = [], []
 
         # chunk your dataframes in small portions
@@ -52,9 +52,8 @@ class MyDataset(Dataset):
             data = data[:self.max_length]
         elif 0 < len(data) < self.max_length:
             data = np.concatenate(
-                (data, np.zeros((self.max_length - len(data), len(self.vocabulary)), dtype=np.float32)))
+                (data, np.zeros((self.max_length - len(data), self.config['number_of_characters']), dtype=np.float32)))
         elif len(data) == 0:
-            data = np.zeros((self.max_length, len(
-                self.vocabulary)), dtype=np.float32)
+            data = np.zeros((self.max_length, self.config['number_of_characters']), dtype=np.float32)
         label = self.labels[index]
         return data, label

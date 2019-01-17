@@ -4,6 +4,8 @@ from sklearn import metrics
 
 # text-preprocessing
 
+def lower(text):
+    return text.lower()
 
 def remove_hashtags(text):
     clean_text = re.sub(r'#[A-Za-z0-9_]+', "", text)
@@ -23,7 +25,8 @@ def remove_urls(text):
 preprocessing_setps = {
     'remove_hashtags': remove_hashtags,
     'remove_urls': remove_urls,
-    'remove_user_mentions': remove_user_mentions
+    'remove_user_mentions': remove_user_mentions,
+    'lower': lower
 }
 
 
