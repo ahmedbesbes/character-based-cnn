@@ -7,7 +7,7 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, config_path, train=True):
+    def __init__(self, config_path, train=True, both_cases=False, language="en"):
 
         with open(config_path) as f:
             self.config = json.load(f)
@@ -17,11 +17,19 @@ class MyDataset(Dataset):
         else:
             self.data_path = self.config['data']['path']['val']
 
-        self.vocabulary = list(self.config['alphabet'])
-        self.max_length = self.config['max_length']
-        self.num_classes = self.config['num_of_classes']
+        self.language = language
+        if both_cases:
+            self.case = 'both'
+        else:
+            self.case = 'lower'
+
+        self.vocabulary = list(
+            self.config['alphabet'][self.language][self.case]['alphabet'])
+        self.max_length = self.config['data']['max_length']
+        self.num_classes = self.config['data']['num_of_classes']
         self.preprocessing_steps = self.config['data']['preprocessing_steps']
-        self.identity_mat = np.identity(self.config['number_of_characters'])
+        self.identity_mat = np.identity(
+            self.config['alphabet'][self.language][self.case]['number_of_characters'])
         texts, labels = [], []
 
         # chunk your dataframes in small portions
@@ -31,10 +39,10 @@ class MyDataset(Dataset):
                              nrows=self.config['data']['max_rows'])
         for df_chunk in tqdm(chunks):
             df_chunk['processed_text'] = (df_chunk[self.config['data']['text_column']]
-                                            .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
+                                          .map(lambda text: utils.process_text(self.preprocessing_steps, text, self.case)))
             texts += df_chunk['processed_text'].tolist()
             labels += df_chunk[self.config['data']['label_column']].tolist()
-        
+
         print('data loaded successfully with {0} rows'.format(len(labels)))
 
         self.texts = texts
@@ -52,8 +60,9 @@ class MyDataset(Dataset):
             data = data[:self.max_length]
         elif 0 < len(data) < self.max_length:
             data = np.concatenate(
-                (data, np.zeros((self.max_length - len(data), self.config['number_of_characters']), dtype=np.float32)))
+                (data, np.zeros((self.max_length - len(data), self.config['alphabet'][self.language][self.case]['number_of_characters']), dtype=np.float32)))
         elif len(data) == 0:
-            data = np.zeros((self.max_length, self.config['number_of_characters']), dtype=np.float32)
+            data = np.zeros(
+                (self.max_length, self.config['alphabet'][self.language][self.case]['number_of_characters']), dtype=np.float32)
         label = self.labels[index]
         return data, label

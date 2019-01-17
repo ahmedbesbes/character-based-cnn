@@ -4,17 +4,21 @@ import torch.nn as nn
 
 
 class CharacterLevelCNN(nn.Module):
-    def __init__(self, config_path):
+    def __init__(self, config_path, both_cases, language='en'):
         super(CharacterLevelCNN, self).__init__()
 
         with open(config_path) as f:
             self.config = json.load(f)
 
+        if both_cases:
+            case = 'both'
+        else:
+            case = 'lower'
 
         conv_layers = []
         for i, conv_layer_parameter in enumerate(self.config['model_parameters']['conv']):
             if i == 0:
-                in_channels = self.config['number_of_characters']
+                in_channels = self.config['alphabet'][language][case]['number_of_characters']
                 out_channels = conv_layer_parameter[0]
             else:
                 in_channels, out_channels = conv_layer_parameter[0], conv_layer_parameter[0]
@@ -33,10 +37,11 @@ class CharacterLevelCNN(nn.Module):
             conv_layers.append(conv_layer)
         self.conv_layers = nn.ModuleList(conv_layers)
 
-        input_shape = (self.config['training']['batch_size'], self.config['max_length'], self.config['number_of_characters'])
+        input_shape = (self.config['training']['batch_size'], self.config['data']
+                       ['max_length'], self.config['alphabet'][language][case]['number_of_characters'])
         dimension = self._get_conv_output(input_shape)
 
-        print('dimension :', dimension) 
+        print('dimension :', dimension)
 
         fc_layer_parameter = 1024
         fc_layers = nn.ModuleList([
@@ -44,7 +49,8 @@ class CharacterLevelCNN(nn.Module):
                 nn.Linear(dimension, fc_layer_parameter), nn.Dropout(0.5)),
             nn.Sequential(nn.Linear(fc_layer_parameter,
                                     fc_layer_parameter), nn.Dropout(0.5)),
-            nn.Linear(fc_layer_parameter, self.config['num_of_classes']),
+            nn.Linear(fc_layer_parameter,
+                      self.config['data']['num_of_classes']),
         ])
 
         self.fc_layers = fc_layers
@@ -69,7 +75,6 @@ class CharacterLevelCNN(nn.Module):
         output = output.view(output.size(0), -1)
         n_size = output.size(1)
         return n_size
-
 
     def forward(self, input):
         output = input.transpose(1, 2)

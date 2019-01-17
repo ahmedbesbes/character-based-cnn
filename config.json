@@ -1,8 +1,17 @@
 {
-    "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
-    "number_of_characters": 69,
-    "max_length": 150,
-    "num_of_classes": 2,
+    "alphabet": {
+        "en": {
+            "lower": {
+                "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
+                "number_of_characters": 69
+            },
+            "both": {
+                "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
+                "number_of_characters": 95
+            }
+        }
+    },
+
     "model_parameters": {
         "name": "small",
         "conv": [
@@ -49,6 +58,8 @@
         },
         "text_column": "SentimentText",
         "label_column": "Sentiment",
+        "max_length": 150,
+        "num_of_classes": 2,
         "encoding": null,
         "chunksize": 50000,
         "max_rows": 100000,

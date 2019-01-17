@@ -30,9 +30,11 @@ preprocessing_setps = {
 }
 
 
-def process_text(steps, text):
+def process_text(steps, text, case):
     if steps is not None:
         for step in steps:
+            if (step == 'lower') & (case == 'both'):
+                continue 
             text = preprocessing_setps[step](text)
 
     processed_text = ""

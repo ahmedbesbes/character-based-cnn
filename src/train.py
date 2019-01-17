@@ -84,7 +84,7 @@ def eval(model, validation_generator, criterion, epoch, print_every=25):
     return np.mean(losses), np.mean(accuraries)
 
 
-def run(config_path='../config.json'):
+def run(config_path='../config.json', both_cases=False):
 
     with open(config_path) as f:
         config = json.load(f)
@@ -100,13 +100,13 @@ def run(config_path='../config.json'):
                          "shuffle": False,
                          "num_workers": 0}
 
-    training_set = MyDataset(config_path=config_path, train=True)
-    validation_set = MyDataset(config_path=config_path, train=False)
+    training_set = MyDataset(config_path=config_path, train=True, both_cases=both_cases)
+    validation_set = MyDataset(config_path=config_path, train=False, both_cases=both_cases)
 
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(config_path='../config.json')
+    model = CharacterLevelCNN(config_path='../config.json', both_cases=both_cases)
     if torch.cuda.is_available():
         model.cuda()
 
