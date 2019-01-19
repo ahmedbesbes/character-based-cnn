@@ -52,10 +52,6 @@
         ]
     },
     "data": {
-        "path": {
-            "train": "D:\\Users\\abesbes\\Desktop\\zeus\\character-based-cnn\\data\\train.csv",
-            "val": "D:\\Users\\abesbes\\Desktop\\zeus\\character-based-cnn\\data\\validation.csv"
-        },
         "text_column": "SentimentText",
         "label_column": "Sentiment",
         "max_length": 150,

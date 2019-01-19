@@ -1,4 +1,5 @@
 import json
+import argparse
 
 import numpy as np
 import torch
@@ -84,7 +85,7 @@ def eval(model, validation_generator, criterion, epoch, print_every=25):
     return np.mean(losses), np.mean(accuraries)
 
 
-def run(config_path='../config.json', both_cases=False):
+def run(train_path, val_path, config_path='../config.json', both_cases=False):
 
     with open(config_path) as f:
         config = json.load(f)
@@ -100,8 +101,8 @@ def run(config_path='../config.json', both_cases=False):
                          "shuffle": False,
                          "num_workers": 0}
 
-    training_set = MyDataset(config_path=config_path, train=True, both_cases=both_cases)
-    validation_set = MyDataset(config_path=config_path, train=False, both_cases=both_cases)
+    training_set = MyDataset(file_path=train_path, config_path=config_path, both_cases=both_cases)
+    validation_set = MyDataset(file_path=val_path, config_path=config_path, both_cases=both_cases)
 
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
@@ -131,4 +132,8 @@ def run(config_path='../config.json', both_cases=False):
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser('Character Based CNN for text classification')
+    parser.add_argument('--train', type=str)
+    parser.add_argument('--val', type=str)
+    args = parser.parse_args
+    run(args.train, args.val)

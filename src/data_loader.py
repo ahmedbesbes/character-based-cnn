@@ -7,15 +7,12 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, config_path, train=True, both_cases=False, language="en"):
+    def __init__(self, file_path, config_path, both_cases=False, language="en"):
 
         with open(config_path) as f:
             self.config = json.load(f)
 
-        if train:
-            self.data_path = self.config['data']['path']['train']
-        else:
-            self.data_path = self.config['data']['path']['val']
+        self.data_path = file_path
 
         self.language = language
         if both_cases:
