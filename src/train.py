@@ -1,5 +1,6 @@
 import json
 import argparse
+import time
 
 import numpy as np
 import torch
@@ -48,7 +49,7 @@ def train(model, training_generator, optimizer, criterion, epoch, print_every=25
                 np.mean(accuraries)
             ))
 
-    return np.mean(losses), np.mean(accuraries)
+    return np.mean(losses), np.mean(accuraries), losses, accuraries
 
 
 def eval(model, validation_generator, criterion, epoch, print_every=25):
@@ -82,10 +83,12 @@ def eval(model, validation_generator, criterion, epoch, print_every=25):
                 np.mean(losses),
                 np.mean(accuraries)))
 
-    return np.mean(losses), np.mean(accuraries)
+    return np.mean(losses), np.mean(accuraries), losses, accuraries
 
 
 def run(train_path, val_path, config_path='../config.json', both_cases=False):
+
+    time_id = int(time.time())
 
     with open(config_path) as f:
         config = json.load(f)
@@ -109,7 +112,7 @@ def run(train_path, val_path, config_path='../config.json', both_cases=False):
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(
+    model = ChvaracterLevelCNN(
         config_path='../config.json', both_cases=both_cases)
     if torch.cuda.is_available():
         model.cuda()
@@ -119,19 +122,34 @@ def run(train_path, val_path, config_path='../config.json', both_cases=False):
         model.parameters(), lr=config['training']['learning_rate'], momentum=0.9)
 
     for epoch in range(epochs):
-        training_loss, training_accuracy = train(model,
-                                                 training_generator,
-                                                 optimizer,
-                                                 criterion,
-                                                 epoch)
+        training_loss, training_accuracy, training_batch_losses, training_batch_accuraries = train(model,
+                                                                                                   training_generator,
+                                                                                                   optimizer,
+                                                                                                   criterion,
+                                                                                                   epoch)
 
-        validation_loss, validation_accuracy = eval(model,
-                                                    validation_generator,
-                                                    criterion,
-                                                    epoch)
+        validation_loss, validation_accuracy, validation_batch_losses, validation_batch_accuracies = eval(model,
+                                                                                                          validation_generator,
+                                                                                                          criterion,
+                                                                                                          epoch)
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
               format(epoch + 1, epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
         print("=" * 50)
+
+        h = {
+            'epoch': epoch,
+            'training_loss': training_loss,
+            'training_accuracy': training_accuracy,
+            'training_batch_losses': training_batch_losses,
+            'training_batch_accuraries': training_batch_accuraries,
+            'validation_loss': validation_loss,
+            'validation_accuracy': validation_accuracy,
+            'validation_batch_losses': validation_batch_losses,
+            'validation_batch_accuraries': validation_batch_accuraries,
+        }
+
+        with open('../logs/{0}.json'.format(time_id), 'a') as f:
+            json.dump(h, f)
 
 
 if __name__ == "__main__":
