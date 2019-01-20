@@ -46,7 +46,7 @@ def train(model, training_generator, optimizer, criterion, epoch, print_every=25
                 num_iter_per_epoch,
                 np.mean(losses),
                 np.mean(accuraries)
-                ))
+            ))
 
     return np.mean(losses), np.mean(accuraries)
 
@@ -101,13 +101,16 @@ def run(train_path, val_path, config_path='../config.json', both_cases=False):
                          "shuffle": False,
                          "num_workers": 0}
 
-    training_set = MyDataset(file_path=train_path, config_path=config_path, both_cases=both_cases)
-    validation_set = MyDataset(file_path=val_path, config_path=config_path, both_cases=both_cases)
+    training_set = MyDataset(file_path=train_path,
+                             config_path=config_path, both_cases=both_cases)
+    validation_set = MyDataset(
+        file_path=val_path, config_path=config_path, both_cases=both_cases)
 
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(config_path='../config.json', both_cases=both_cases)
+    model = CharacterLevelCNN(
+        config_path='../config.json', both_cases=both_cases)
     if torch.cuda.is_available():
         model.cuda()
 
@@ -127,13 +130,14 @@ def run(train_path, val_path, config_path='../config.json', both_cases=False):
                                                     criterion,
                                                     epoch)
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
-              format(epoch+1, epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
+              format(epoch + 1, epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
         print("=" * 50)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser('Character Based CNN for text classification')
+    parser = argparse.ArgumentParser(
+        'Character Based CNN for text classification')
     parser.add_argument('--train', type=str)
     parser.add_argument('--val', type=str)
-    args = parser.parse_args
+    args = parser.parse_args()
     run(args.train, args.val)

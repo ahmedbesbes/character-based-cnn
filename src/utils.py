@@ -4,8 +4,10 @@ from sklearn import metrics
 
 # text-preprocessing
 
+
 def lower(text):
     return text.lower()
+
 
 def remove_hashtags(text):
     clean_text = re.sub(r'#[A-Za-z0-9_]+', "", text)
@@ -34,7 +36,7 @@ def process_text(steps, text, case):
     if steps is not None:
         for step in steps:
             if (step == 'lower') & (case == 'both'):
-                continue 
+                continue
             text = preprocessing_setps[step](text)
 
     processed_text = ""
