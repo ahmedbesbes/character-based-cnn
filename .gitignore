@@ -3,3 +3,5 @@ notebooks/
 data/
 src/__pycache__/
 .vscode/
+plots/
+logs/

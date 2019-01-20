@@ -1,6 +1,10 @@
+import json
 import re
 import numpy as np
 from sklearn import metrics
+import matplotlib
+matplotlib.use('Agg')
+from matplotlib import pyplot as plt
 
 # text-preprocessing
 
@@ -61,3 +65,37 @@ def get_evaluation(y_true, y_prob, list_metrics):
         output['confusion_matrix'] = str(
             metrics.confusion_matrix(y_true, y_pred))
     return output
+
+
+# plotting training and validation metrics
+
+def plot_metrics(filename):
+    with open('../logs/{0}.json'.format(filename)) as f:
+        history = json.load(f)
+
+    epochs = len(history)
+    train_losses = list(map(lambda h: h['training_loss'], history))
+    train_accuracies = list(map(lambda h: h['training_accuracy'], history))
+    val_losses = list(map(lambda h: h['validation_loss'], history))
+    val_accuracies = list(map(lambda h: h['validation_accuracy'], history))
+
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(range(epochs), train_losses, label='train_loss')
+    plt.plot(range(epochs), val_losses, label='test_loss')
+    plt.title('train & test loss')
+    plt.grid(1)
+    plt.xlabel('epochs')
+    plt.legend()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(range(epochs), train_accuracies, label='train_acc')
+    plt.plot(range(epochs), val_accuracies, label='test_acc')
+    plt.title('train & test accuracy')
+    plt.grid(1)
+    plt.xlabel('epochs')
+    plt.legend()
+
+    plt.savefig('../plots/{0}.png'.format(filename))
+    
+

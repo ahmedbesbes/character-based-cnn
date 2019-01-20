@@ -7,12 +7,15 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, file_path, config_path, both_cases=False, language="en"):
+    def __init__(self, file_path, max_rows, config_path, both_cases=False, language="en"):
 
         with open(config_path) as f:
             self.config = json.load(f)
 
         self.data_path = file_path
+        self.max_rows = max_rows
+        self.chunksize = self.config['data']['chunksize']
+        self.encoding = self.config['data']['encoding']
 
         self.language = language
         if both_cases:
@@ -31,9 +34,9 @@ class MyDataset(Dataset):
 
         # chunk your dataframes in small portions
         chunks = pd.read_csv(self.data_path,
-                             chunksize=self.config['data']['chunksize'],
-                             encoding=self.config['data']['encoding'],
-                             nrows=self.config['data']['max_rows'])
+                             chunksize=self.chunksize,
+                             encoding=self.encoding,
+                             nrows=self.max_rows)
         for df_chunk in tqdm(chunks):
             df_chunk['processed_text'] = (df_chunk[self.config['data']['text_column']]
                                           .map(lambda text: utils.process_text(self.preprocessing_steps, text, self.case)))
