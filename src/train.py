@@ -1,8 +1,10 @@
 import os
+import shutil
 import json
 import argparse
 import time
 
+from tqdm import tqdm
 import numpy as np
 import torch
 import torch.nn as nn
@@ -13,7 +15,6 @@ from tensorboardX import SummaryWriter
 from cnn_model import CharacterLevelCNN
 from data_loader import MyDataset
 
-from tqdm import tqdm
 import utils
 
 
@@ -42,8 +43,10 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         losses.append(loss.item())
         accuraries.append(training_metrics["accuracy"])
 
-        writer.add_scalar('Train/Loss', loss.item(), epoch * num_iter_per_epoch + iter)
-        writer.add_scalar('Train/Accuracy', training_metrics['accuracy'], epoch * num_iter_per_epoch + iter)
+        writer.add_scalar('Train/Loss', loss.item(),
+                          epoch * num_iter_per_epoch + iter)
+        writer.add_scalar(
+            'Train/Accuracy', training_metrics['accuracy'], epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
             print("[Training - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
@@ -54,7 +57,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
                 np.mean(accuraries)
             ))
 
-    return np.mean(losses), np.mean(accuraries), losses, accuraries
+    return np.mean(losses), np.mean(accuraries)
 
 
 def evaluate(model, validation_generator, criterion, epoch, writer, print_every=25):
@@ -78,8 +81,10 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
         losses.append(loss.item())
         accuraries.append(accuracy)
 
-        writer.add_scalar('Test/Loss', loss.item(), epoch * num_iter_per_epoch + iter)
-        writer.add_scalar('Test/Accuracy', accuracy, epoch * num_iter_per_epoch + iter)
+        writer.add_scalar('Test/Loss', loss.item(),
+                          epoch * num_iter_per_epoch + iter)
+        writer.add_scalar('Test/Accuracy', accuracy,
+                          epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
             print("[Validation - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
@@ -89,21 +94,21 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                 np.mean(losses),
                 np.mean(accuraries)))
 
-    return np.mean(losses), np.mean(accuraries), losses, accuraries
+    return np.mean(losses), np.mean(accuraries)
 
 
-def run(train_path, val_path, max_rows, config_path='../config.json', both_cases=False):
+def run(args, config_path='../config.json', both_cases=False):
 
-    time_id = int(time.time())
-    log_path = '../logs/{}'.format(time_id)
+    log_path = args.log_path
+    if os.path.isdir(log_path):
+        shutil.rmtree(log_path)
     os.makedirs(log_path)
-    write = SummaryWriter(log_path)
+    writer = SummaryWriter(log_path)
 
     with open(config_path) as f:
         config = json.load(f)
 
-    batch_size = config['training']['batch_size']
-    epochs = config['training']['epochs']
+    batch_size = args.batch_size
 
     training_params = {"batch_size": batch_size,
                        "shuffle": True,
@@ -113,68 +118,105 @@ def run(train_path, val_path, max_rows, config_path='../config.json', both_cases
                          "shuffle": False,
                          "num_workers": 0}
 
-    training_set = MyDataset(file_path=train_path,
-                             max_rows=max_rows,
-                             config_path=config_path,
-                             both_cases=both_cases)
-    validation_set = MyDataset(file_path=val_path,
-                               max_rows=max_rows,
-                               config_path=config_path,
-                               both_cases=both_cases)
+    training_set = MyDataset(args, train=True)
+    validation_set = MyDataset(args, train=False)
 
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(
-        config_path='../config.json', both_cases=both_cases)
+    model = CharacterLevelCNN(args)
     if torch.cuda.is_available():
         model.cuda()
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(
-        model.parameters(), lr=config['training']['learning_rate'], momentum=0.9)
+    if args.optimizer == 'sgd':
+        optimizer = torch.optim.SGD(
+            model.parameters(), lr=args.learning_rate, momentum=0.9
+        )
+    elif args.optimizer == 'adam':
+        optimizer = torch.optim.Adam(
+            model.parameters, lr=args.learning_rate
+        )
 
-    with open('../logs/{}.json'.format(time_id)) as f:
-        json.dump([], f)
+    best_loss = 1e10
+    best_epoch = 0
 
-    for epoch in range(epochs):
-        training_loss, training_accuracy, training_batch_losses, training_batch_accuracies = train(model,
-                                                                                                   training_generator,
-                                                                                                   optimizer,
-                                                                                                   criterion,
-                                                                                                   epoch)
+    for epoch in range(args.epochs):
+        training_loss, training_accuracy = train(model,
+                                                 training_generator,
+                                                 optimizer,
+                                                 criterion,
+                                                 epoch,
+                                                 writer)
 
-        validation_loss, validation_accuracy, validation_batch_losses, validation_batch_accuracies = evaluate(model,
-                                                                                                              validation_generator,
-                                                                                                              criterion,
-                                                                                                              epoch)
+        validation_loss, validation_accuracy = evaluate(model,
+                                                        validation_generator,
+                                                        criterion,
+                                                        epoch,
+                                                        writer)
+
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
-              format(epoch + 1, epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
+              format(epoch + 1, args.epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
         print("=" * 50)
 
-        h = {
-            'epoch': epoch,
-            'training_loss': training_loss,
-            'training_accuracy': training_accuracy,
-            'training_batch_losses': training_batch_losses,
-            'training_batch_accuraries': training_batch_accuracies,
-            'validation_loss': validation_loss,
-            'validation_accuracy': validation_accuracy,
-            'validation_batch_losses': validation_batch_losses,
-            'validation_batch_accuraries': validation_batch_accuracies
-        }
+        # learning rate scheduling
 
-        with open('../logs/{0}.json'.format(time_id), 'a') as f:
-            json.dump(h, f)
+        if args.optimizer == 'sgd' and epoch % 3 == 0 and epoch > 0:
+            current_lr = optimizer.state_dict()['param_groups'][0]['lr']
+            current_lr /= 2
+            print('Decreasing learning rate to {0}'.format(current_lr))
+            for param_group in optimizer.param_groups:
+                param_group['lr'] = current_lr
 
-        utils.plot_metrics(time_id)
+        # early stopping
+        if validation_loss < best_loss:
+            best_loss = validation_loss
+            best_epoch = epoch
+            torch.save(model, args.output + 'char_cnn_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
+                                                                                       optimizer.state_dict()[
+                                                                                           'param_groups'][0]['lr'],
+                                                                                       round(validation_loss, 4),
+                                                                                       round(validation_accuracy, 4)
+                                                                                       ))
+
+        if epoch - best_epoch > args.patience > 0:
+            print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
+                epoch, validation_loss, best_epoch))
+            break
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Character Based CNN for text classification')
-    parser.add_argument('--train', type=str)
-    parser.add_argument('--val', type=str)
+    parser.add_argument('--train', type=str, default='../data/train.csv')
+    parser.add_argument('--val', type=str, default='../data/validation.csv')
+    parser.add_argument('--label_column', type=str, default='Sentiment')
+    parser.add_argument('--text_column', type=str, default='SentimentText')
+
+    parser.add_argument('--doc_type', type=str,
+                        choices=['tweets', 'reviews'], default='tweets')
+    parser.add_argument('--alphabet', type=str,
+                        default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
+    parser.add_argument('--number_of_characters', type=int, default=68)
+    parser.add_argument('--max_length', type=int, default=150)
     parser.add_argument('--max_rows', type=int, default=100000)
+    parser.add_argument('--chunksize', type=int, default=50000)
+    parser.add_argument('--encoding', type=str, default='utf-8')
+
+    parser.add_argument('--size', type=str,
+                        choices=['small', 'large'], default='small')
+    parser.add_argument('--number_of_classes', type=int, default=2)
+
+    parser.add_argument('--epochs', type=int, default=10)
+    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--optimizer', type=str,
+                        choices=['adam', 'sgd'], default='sgd')
+    parser.add_argument('--learning_rate', type=float, default=0.01)
+
+    parser.add_argument('--log_path', type=str, default='../logs')
+    parser.add_argument('--config_path', type=str, default='../config.json')
+    parser.add_argument('--output', type=str, default='../models/')
+
+    parser.add_argument('--patience', type=int, default=3)
     args = parser.parse_args()
-    run(args.train, args.val, args.max_rows)
+    run(args)

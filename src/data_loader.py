@@ -7,29 +7,32 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, file_path, max_rows, config_path, both_cases=False, language="en"):
+    def __init__(self, args, train=True):
 
-        with open(config_path) as f:
-            self.config = json.load(f)
-
-        self.data_path = file_path
-        self.max_rows = max_rows
-        self.chunksize = self.config['data']['chunksize']
-        self.encoding = self.config['data']['encoding']
-
-        self.language = language
-        if both_cases:
-            self.case = 'both'
+        if train:
+            self.data_path = args.train
         else:
-            self.case = 'lower'
+            self.data_path = args.val
 
-        self.vocabulary = list(
-            self.config['alphabet'][self.language][self.case]['alphabet'])
-        self.max_length = self.config['data']['max_length']
-        self.num_classes = self.config['data']['num_of_classes']
-        self.preprocessing_steps = self.config['data']['preprocessing_steps']
-        self.identity_mat = np.identity(
-            self.config['alphabet'][self.language][self.case]['number_of_characters'])
+        self.max_rows = args.max_rows
+        self.chunksize = args.chunksize
+        self.encoding = args.encoding
+
+        self.vocabulary = list(args.alphabet)
+        self.number_of_characters = args.number_of_characters
+        self.max_length = args.max_length
+        self.num_classes = args.number_of_classes
+
+        if args.doc_type == 'tweets':
+            self.preprocessing_steps = ['remove_hashtags',
+                                        'remove_urls',
+                                        'remove_user_mentions',
+                                        'lower']
+        elif args.doc_type == 'reviews':
+            self.preprocessing_steps = ['remove_urls',
+                                        'lower']
+
+        self.identity_mat = np.identity(self.number_of_characters)
         texts, labels = [], []
 
         # chunk your dataframes in small portions
@@ -38,10 +41,10 @@ class MyDataset(Dataset):
                              encoding=self.encoding,
                              nrows=self.max_rows)
         for df_chunk in tqdm(chunks):
-            df_chunk['processed_text'] = (df_chunk[self.config['data']['text_column']]
-                                          .map(lambda text: utils.process_text(self.preprocessing_steps, text, self.case)))
+            df_chunk['processed_text'] = (df_chunk[args.text_column]
+                                          .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
             texts += df_chunk['processed_text'].tolist()
-            labels += df_chunk[self.config['data']['label_column']].tolist()
+            labels += df_chunk[args.label_column].tolist()
 
         print('data loaded successfully with {0} rows'.format(len(labels)))
 
@@ -60,9 +63,9 @@ class MyDataset(Dataset):
             data = data[:self.max_length]
         elif 0 < len(data) < self.max_length:
             data = np.concatenate(
-                (data, np.zeros((self.max_length - len(data), self.config['alphabet'][self.language][self.case]['number_of_characters']), dtype=np.float32)))
+                (data, np.zeros((self.max_length - len(data), self.number_of_characters), dtype=np.float32)))
         elif len(data) == 0:
             data = np.zeros(
-                (self.max_length, self.config['alphabet'][self.language][self.case]['number_of_characters']), dtype=np.float32)
+                (self.max_length, self.number_of_characters), dtype=np.float32)
         label = self.labels[index]
         return data, label
