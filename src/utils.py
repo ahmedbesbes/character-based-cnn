@@ -65,9 +65,9 @@ def preprocess_input(args):
     for step in steps:
         raw_text = preprocessing_setps[step](raw_text)
 
-    number_of_characters = args.number_of_characters
+    number_of_characters = args.number_of_characters + len(args.extra_characters)
     identity_mat = np.identity(number_of_characters)
-    vocabulary = list(args.alphabet)
+    vocabulary = list(args.alphabet) + list(args.extra_characters)
     max_length = args.max_length
 
     processed_output = np.array([identity_mat[vocabulary.index(i)] for i in list(

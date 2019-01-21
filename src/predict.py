@@ -21,18 +21,13 @@ if __name__ == "__main__":
 
     parser.add_argument('--text', type=str,
                         default='I love pizza!', help='text string')
-    parser.add_argument('--doc_type', type=str,
-                        choices=['tweet', 'review'], default='tweet')
-
-    parser.add_argument('--input_file', type=str,
-                        help='path of a csv input file containing data to score')
-    parser.add_argument('--output_file', type=str,
-                        help='path of a csv output file containing the predicitions')
+    parser.add_argument('--steps', nargs="+", default=['lower'])
 
     # arguments needed for the predicition
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
-    parser.add_argument('--number_of_characters', type=int, default=68)
+    parser.add_argument('--number_of_characters', type=int, default=69)
+    parser.add_argument('--extra_characters', type=str)
     parser.add_argument('--max_length', type=int, default=150)
 
     args = parser.parse_args()
