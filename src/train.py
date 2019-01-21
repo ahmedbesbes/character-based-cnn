@@ -133,7 +133,7 @@ def run(args, both_cases=False):
         )
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam(
-            model.parameters, lr=args.learning_rate
+            model.parameters(), lr=args.learning_rate
         )
 
     best_loss = 1e10
