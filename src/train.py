@@ -39,14 +39,17 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         optimizer.step()
         training_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                 predictions.cpu().detach().numpy(),
-                                                list_metrics=["accuracy"])
+                                                list_metrics=["accuracy", "f1"])
         losses.append(loss.item())
         accuraries.append(training_metrics["accuracy"])
+        f1 = training_metrics['f1']
 
         writer.add_scalar('Train/Loss', loss.item(),
                           epoch * num_iter_per_epoch + iter)
         writer.add_scalar(
             'Train/Accuracy', training_metrics['accuracy'], epoch * num_iter_per_epoch + iter)
+        writer.add_scalar('Train/f1', f1,
+                          epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
             print("[Training - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
@@ -76,14 +79,17 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
         loss = criterion(predictions, labels)
         validation_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                   predictions.cpu().detach().numpy(),
-                                                  list_metrics=["accuracy"])
+                                                  list_metrics=["accuracy", "f1"])
         accuracy = validation_metrics['accuracy']
+        f1 = validation_metrics['f1']
         losses.append(loss.item())
         accuraries.append(accuracy)
 
         writer.add_scalar('Test/Loss', loss.item(),
                           epoch * num_iter_per_epoch + iter)
         writer.add_scalar('Test/Accuracy', accuracy,
+                          epoch * num_iter_per_epoch + iter)
+        writer.add_scalar('Test/f1', f1,
                           epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
