@@ -170,12 +170,13 @@ def run(args, both_cases=False):
         if validation_loss < best_loss:
             best_loss = validation_loss
             best_epoch = epoch
-            torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
-                                                                                       optimizer.state_dict()[
-                                                                                           'param_groups'][0]['lr'],
-                                                                                       round(validation_loss, 4),
-                                                                                       round(validation_accuracy, 4)
-                                                                                       ))
+            if args.checkout == 1:
+                torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
+                                                                                        optimizer.state_dict()[
+                                                                                            'param_groups'][0]['lr'],
+                                                                                        round(validation_loss, 4),
+                                                                                        round(validation_accuracy, 4)
+                                                                                        ))
 
         if epoch - best_epoch > args.patience > 0:
             print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
@@ -213,6 +214,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--log_path', type=str, default='../logs')
     parser.add_argument('--config_path', type=str, default='../config.json')
+    parser.add_argument('--checkout', type=int, choices=[0, 1], default=1)
     parser.add_argument('--output', type=str, default='../models/')
 
     parser.add_argument('--patience', type=int, default=3)
