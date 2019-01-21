@@ -66,6 +66,17 @@ def get_evaluation(y_true, y_prob, list_metrics):
 
 def preprocess_input(args):
     raw_text = args.text
+    if args.doc_type == 'tweet':
+        steps = ['remove_hashtags',
+                 'remove_urls',
+                 'remove_user_mentions',
+                 'lower']
+    elif args.doc_type == 'review':
+        steps = ['remove_urls',
+                 'lower']
+    for step in steps:
+        raw_text = preprocessing_setps[step](raw_text)
+
     number_of_characters = args.number_of_characters
     identity_mat = np.identity(number_of_characters)
     vocabulary = list(args.alphabet)
@@ -82,5 +93,3 @@ def preprocess_input(args):
         processed_output = np.zeros(
             (max_length, number_of_characters), dtype=np.float32)
     return processed_output
-
-    
