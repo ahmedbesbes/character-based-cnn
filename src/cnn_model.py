@@ -13,7 +13,7 @@ class CharacterLevelCNN(nn.Module):
         conv_layers = []
         for i, conv_layer_parameter in enumerate(self.config['model_parameters'][args.size]['conv']):
             if i == 0:
-                in_channels = args.number_of_characters
+                in_channels = args.number_of_characters + len(args.extra_characters)
                 out_channels = conv_layer_parameter[0]
             else:
                 in_channels, out_channels = conv_layer_parameter[0], conv_layer_parameter[0]
@@ -33,7 +33,7 @@ class CharacterLevelCNN(nn.Module):
         self.conv_layers = nn.ModuleList(conv_layers)
 
         input_shape = (args.batch_size, args.max_length,
-                       args.number_of_characters)
+                       args.number_of_characters + len(args.extra_characters))
         dimension = self._get_conv_output(input_shape)
 
         print('dimension :', dimension)

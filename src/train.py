@@ -203,6 +203,7 @@ if __name__ == "__main__":
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
     parser.add_argument('--number_of_characters', type=int, default=68)
+    parser.add_argument('--extra_characters', type=str, default='')
 
     parser.add_argument('--config_path', type=str, default='../config.json')
     parser.add_argument('--size', type=str,
