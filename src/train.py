@@ -105,7 +105,6 @@ def run(args, both_cases=False):
     os.makedirs(log_path)
     writer = SummaryWriter(log_path)
 
-
     batch_size = args.batch_size
 
     training_params = {"batch_size": batch_size,
@@ -116,9 +115,11 @@ def run(args, both_cases=False):
                          "shuffle": False,
                          "num_workers": 0}
 
-    training_set = MyDataset(args, train=True)
-    validation_set = MyDataset(args, train=False)
-
+    full_dataset = MyDataset(args)
+    train_size = int(args.validation_split * len(full_dataset))
+    validation_size = len(full_dataset) - train_size
+    training_set, validation_set = torch.utils.data.random_split(
+        full_dataset, [train_size, validation_size])
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
@@ -158,7 +159,7 @@ def run(args, both_cases=False):
         print("=" * 50)
 
         # learning rate scheduling
-        
+
         if args.schedule != 0:
             if args.optimizer == 'sgd' and epoch % args.schedule == 0 and epoch > 0:
                 current_lr = optimizer.state_dict()['param_groups'][0]['lr']
@@ -173,11 +174,13 @@ def run(args, both_cases=False):
             best_epoch = epoch
             if args.checkout == 1:
                 torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
-                                                                                        optimizer.state_dict()[
-                                                                                            'param_groups'][0]['lr'],
-                                                                                        round(validation_loss, 4),
-                                                                                        round(validation_accuracy, 4)
-                                                                                        ))
+                                                                                                 optimizer.state_dict()[
+                                                                                                     'param_groups'][0]['lr'],
+                                                                                                 round(
+                                                                                                     validation_loss, 4),
+                                                                                                 round(
+                                                                                                     validation_accuracy, 4)
+                                                                                                 ))
 
         if epoch - best_epoch > args.patience > 0:
             print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
@@ -188,37 +191,35 @@ def run(args, both_cases=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Character Based CNN for text classification')
-    parser.add_argument('--train', type=str, default='../data/train.csv')
-    parser.add_argument('--val', type=str, default='../data/validation.csv')
+    parser.add_argument('--data_path', type=str, default='../data/train.csv')
+    parser.add_argument('--validation_split', type=float, default=0.8)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
-
-    parser.add_argument('--doc_type', type=str,
-                        choices=['tweets', 'reviews'], default='tweets')
-    parser.add_argument('--alphabet', type=str,
-                        default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
-    parser.add_argument('--number_of_characters', type=int, default=68)
-    parser.add_argument('--max_length', type=int, default=150)
     parser.add_argument('--max_rows', type=int, default=100000)
     parser.add_argument('--chunksize', type=int, default=50000)
     parser.add_argument('--encoding', type=str, default='utf-8')
+    parser.add_argument('--steps', nargs='+', default=['lower'])
 
+    parser.add_argument('--alphabet', type=str,
+                        default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
+    parser.add_argument('--number_of_characters', type=int, default=68)
+
+    parser.add_argument('--config_path', type=str, default='../config.json')
     parser.add_argument('--size', type=str,
                         choices=['small', 'large'], default='small')
-    parser.add_argument('--number_of_classes', type=int, default=2)
 
+    parser.add_argument('--max_length', type=int, default=150)
+    parser.add_argument('--number_of_classes', type=int, default=2)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--optimizer', type=str,
                         choices=['adam', 'sgd'], default='sgd')
     parser.add_argument('--learning_rate', type=float, default=0.01)
-
-    parser.add_argument('--log_path', type=str, default='../logs')
-    parser.add_argument('--config_path', type=str, default='../config.json')
-    parser.add_argument('--checkout', type=int, choices=[0, 1], default=1)
-    parser.add_argument('--output', type=str, default='../models/')
-
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
+    parser.add_argument('--checkout', type=int, choices=[0, 1], default=1)
+    parser.add_argument('--log_path', type=str, default='../logs')
+    parser.add_argument('--output', type=str, default='../models/')
+
     args = parser.parse_args()
     run(args)

@@ -66,14 +66,7 @@ def get_evaluation(y_true, y_prob, list_metrics):
 
 def preprocess_input(args):
     raw_text = args.text
-    if args.doc_type == 'tweet':
-        steps = ['remove_hashtags',
-                 'remove_urls',
-                 'remove_user_mentions',
-                 'lower']
-    elif args.doc_type == 'review':
-        steps = ['remove_urls',
-                 'lower']
+    steps = args.steps
     for step in steps:
         raw_text = preprocessing_setps[step](raw_text)
 

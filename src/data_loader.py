@@ -7,12 +7,9 @@ import utils
 
 
 class MyDataset(Dataset):
-    def __init__(self, args, train=True):
+    def __init__(self, args):
 
-        if train:
-            self.data_path = args.train
-        else:
-            self.data_path = args.val
+        self.data_path = args.data_path
 
         self.max_rows = args.max_rows
         self.chunksize = args.chunksize
@@ -23,14 +20,7 @@ class MyDataset(Dataset):
         self.max_length = args.max_length
         self.num_classes = args.number_of_classes
 
-        if args.doc_type == 'tweets':
-            self.preprocessing_steps = ['remove_hashtags',
-                                        'remove_urls',
-                                        'remove_user_mentions',
-                                        'lower']
-        elif args.doc_type == 'reviews':
-            self.preprocessing_steps = ['remove_urls',
-                                        'lower']
+        self.preprocessing_steps = args.steps
 
         self.identity_mat = np.identity(self.number_of_characters)
         texts, labels = [], []

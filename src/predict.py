@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Testing a pretrained Character Based CNN for text classification')
     parser.add_argument('--model', type=str, help='path for pre-trained model')
-    
+
     parser.add_argument('--text', type=str,
                         default='I love pizza!', help='text string')
     parser.add_argument('--doc_type', type=str,
