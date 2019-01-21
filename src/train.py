@@ -172,7 +172,7 @@ def run(args, both_cases=False):
         if validation_loss < best_loss:
             best_loss = validation_loss
             best_epoch = epoch
-            if args.checkout == 1:
+            if args.checkpoint == 1:
                 torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
                                                                                                  optimizer.state_dict()[
                                                                                                      'param_groups'][0]['lr'],
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
-    parser.add_argument('--checkout', type=int, choices=[0, 1], default=1)
+    parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--log_path', type=str, default='../logs')
     parser.add_argument('--output', type=str, default='../models/')
 

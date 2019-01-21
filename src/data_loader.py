@@ -27,6 +27,7 @@ class MyDataset(Dataset):
 
         # chunk your dataframes in small portions
         chunks = pd.read_csv(self.data_path,
+                             usecols=[args.text_column, args.label_column]
                              chunksize=self.chunksize,
                              encoding=self.encoding,
                              nrows=self.max_rows)
