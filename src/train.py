@@ -158,13 +158,14 @@ def run(args, both_cases=False):
         print("=" * 50)
 
         # learning rate scheduling
-
-        if args.optimizer == 'sgd' and epoch % 3 == 0 and epoch > 0:
-            current_lr = optimizer.state_dict()['param_groups'][0]['lr']
-            current_lr /= 2
-            print('Decreasing learning rate to {0}'.format(current_lr))
-            for param_group in optimizer.param_groups:
-                param_group['lr'] = current_lr
+        
+        if args.schedule != 0:
+            if args.optimizer == 'sgd' and epoch % args.schedule == 0 and epoch > 0:
+                current_lr = optimizer.state_dict()['param_groups'][0]['lr']
+                current_lr /= 2
+                print('Decreasing learning rate to {0}'.format(current_lr))
+                for param_group in optimizer.param_groups:
+                    param_group['lr'] = current_lr
 
         # early stopping
         if validation_loss < best_loss:
@@ -217,6 +218,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkout', type=int, choices=[0, 1], default=1)
     parser.add_argument('--output', type=str, default='../models/')
 
+    parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
     args = parser.parse_args()
     run(args)
