@@ -4,11 +4,16 @@ import utils
 import torch.nn.functional as F
 
 
+use_cuda = torch.cuda.is_available()
+
 def predict(args):
     model = torch.load(args.model)
     processed_input = utils.preprocess_input(args)
     processed_input = torch.tensor(processed_input)
     processed_input = processed_input.unsqueeze(0)
+    if use_cuda:
+        processed_input.cuda()
+        model.cuda()
     prediction = model(processed_input)
     probabilities = F.softmax(prediction, dim=1)
     return probabilities
