@@ -97,7 +97,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
     return np.mean(losses), np.mean(accuraries)
 
 
-def run(args, config_path='../config.json', both_cases=False):
+def run(args, both_cases=False):
 
     log_path = args.log_path
     if os.path.isdir(log_path):
@@ -105,8 +105,6 @@ def run(args, config_path='../config.json', both_cases=False):
     os.makedirs(log_path)
     writer = SummaryWriter(log_path)
 
-    with open(config_path) as f:
-        config = json.load(f)
 
     batch_size = args.batch_size
 
