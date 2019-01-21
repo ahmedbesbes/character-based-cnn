@@ -170,7 +170,7 @@ def run(args, both_cases=False):
         if validation_loss < best_loss:
             best_loss = validation_loss
             best_epoch = epoch
-            torch.save(model, args.output + 'char_cnn_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
+            torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
                                                                                        optimizer.state_dict()[
                                                                                            'param_groups'][0]['lr'],
                                                                                        round(validation_loss, 4),

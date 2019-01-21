@@ -6,3 +6,4 @@ src/__pycache__
 .vscode/
 plots/
 logs/
+models/
