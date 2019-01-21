@@ -12,8 +12,8 @@ def predict(args):
     processed_input = torch.tensor(processed_input)
     processed_input = processed_input.unsqueeze(0)
     if use_cuda:
-        processed_input.cuda()
-        model.cuda()
+        processed_input = processed_input.to('cuda')
+        model = model.to('cuda')
     prediction = model(processed_input)
     probabilities = F.softmax(prediction, dim=1)
     return probabilities
