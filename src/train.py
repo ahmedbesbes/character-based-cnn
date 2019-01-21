@@ -109,11 +109,11 @@ def run(args, both_cases=False):
 
     training_params = {"batch_size": batch_size,
                        "shuffle": True,
-                       "num_workers": 0}
+                       "num_workers": args.workers}
 
     validation_params = {"batch_size": batch_size,
                          "shuffle": False,
-                         "num_workers": 0}
+                         "num_workers": args.workers}
 
     full_dataset = MyDataset(args)
     train_size = int(args.validation_split * len(full_dataset))
@@ -218,6 +218,7 @@ if __name__ == "__main__":
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
+    parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='../logs')
     parser.add_argument('--output', type=str, default='../models/')
 
