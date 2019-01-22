@@ -1,6 +1,6 @@
 import argparse
 import torch
-import utils
+from src import utils
 import torch.nn.functional as F
 
 
