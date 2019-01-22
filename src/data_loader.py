@@ -3,8 +3,7 @@ import numpy as np
 from torch.utils.data import Dataset
 import pandas as pd
 from tqdm import tqdm
-import utils
-
+from . import utils
 
 class MyDataset(Dataset):
     def __init__(self, args):
@@ -16,7 +15,8 @@ class MyDataset(Dataset):
         self.encoding = args.encoding
 
         self.vocabulary = list(args.alphabet) + list(args.extra_characters)
-        self.number_of_characters = args.number_of_characters + len(args.extra_characters)
+        self.number_of_characters = args.number_of_characters + \
+            len(args.extra_characters)
         self.max_length = args.max_length
         self.num_classes = args.number_of_classes
 

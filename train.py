@@ -12,11 +12,9 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
-from cnn_model import CharacterLevelCNN
-from data_loader import MyDataset
-
-import utils
-
+from src.cnn_model import CharacterLevelCNN
+from src.data_loader import MyDataset
+from src import utils
 
 def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
     model.train()
@@ -197,7 +195,7 @@ def run(args, both_cases=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Character Based CNN for text classification')
-    parser.add_argument('--data_path', type=str, default='../data/train.csv')
+    parser.add_argument('--data_path', type=str, default='./data/train.csv')
     parser.add_argument('--validation_split', type=float, default=0.8)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
@@ -211,7 +209,7 @@ if __name__ == "__main__":
     parser.add_argument('--number_of_characters', type=int, default=68)
     parser.add_argument('--extra_characters', type=str, default='')
 
-    parser.add_argument('--config_path', type=str, default='../config.json')
+    parser.add_argument('--config_path', type=str, default='./config.json')
     parser.add_argument('--size', type=str,
                         choices=['small', 'large'], default='small')
 
@@ -226,8 +224,8 @@ if __name__ == "__main__":
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
-    parser.add_argument('--log_path', type=str, default='../logs')
-    parser.add_argument('--output', type=str, default='../models/')
+    parser.add_argument('--log_path', type=str, default='./logs')
+    parser.add_argument('--output', type=str, default='./models/')
 
     args = parser.parse_args()
     run(args)
