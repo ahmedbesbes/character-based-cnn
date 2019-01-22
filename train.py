@@ -108,9 +108,8 @@ def run(args, both_cases=False):
         shutil.rmtree(log_path)
     os.makedirs(log_path)
 
-    if os.path.exists(args.output):
+    if not os.path.exists(args.output):
         os.makedirs(args.output)
-
 
     writer = SummaryWriter(log_path)
 
