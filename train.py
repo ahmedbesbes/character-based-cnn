@@ -107,6 +107,11 @@ def run(args, both_cases=False):
     if os.path.isdir(log_path):
         shutil.rmtree(log_path)
     os.makedirs(log_path)
+
+    if os.path.exists(args.output):
+        os.makedirs(args.output)
+
+
     writer = SummaryWriter(log_path)
 
     batch_size = args.batch_size
