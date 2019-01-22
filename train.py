@@ -16,6 +16,7 @@ from src.cnn_model import CharacterLevelCNN
 from src.data_loader import MyDataset
 from src import utils
 
+
 def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
     model.train()
     losses = []
@@ -181,14 +182,15 @@ def run(args, both_cases=False):
             best_loss = validation_loss
             best_epoch = epoch
             if args.checkpoint == 1:
-                torch.save(model, args.output + 'char_cnn_epoch_{}_{}_loss_{}_acc_{}.pth'.format(epoch,
-                                                                                                 optimizer.state_dict()[
-                                                                                                     'param_groups'][0]['lr'],
-                                                                                                 round(
-                                                                                                     validation_loss, 4),
-                                                                                                 round(
-                                                                                                     validation_accuracy, 4)
-                                                                                                 ))
+                torch.save(model, args.output + 'char_cnn_epoch_{}_{}_{}_loss_{}_acc_{}.pth'.format(args.model_name,
+                                                                                                    epoch,
+                                                                                                    optimizer.state_dict()[
+                                                                                                        'param_groups'][0]['lr'],
+                                                                                                    round(
+                                                                                                        validation_loss, 4),
+                                                                                                    round(
+                                                                                                        validation_accuracy, 4)
+                                                                                                    ))
 
         if epoch - best_epoch > args.patience > 0:
             print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
@@ -203,7 +205,7 @@ if __name__ == "__main__":
     parser.add_argument('--validation_split', type=float, default=0.8)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
-    parser.add_argument('--max_rows', type=int, default=100000) 
+    parser.add_argument('--max_rows', type=int, default=100000)
     parser.add_argument('--chunksize', type=int, default=50000)
     parser.add_argument('--encoding', type=str, default='utf-8')
     parser.add_argument('--steps', nargs='+', default=['lower'])
@@ -228,8 +230,9 @@ if __name__ == "__main__":
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
-    parser.add_argument('--log_path', type=str, default='./logs')
+    parser.add_argument('--log_path', type=str, default='./logs/')
     parser.add_argument('--output', type=str, default='./models/')
+    parser.add_argument('--model_name', type=str)
 
     args = parser.parse_args()
     run(args)
