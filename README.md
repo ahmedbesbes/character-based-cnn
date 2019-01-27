@@ -6,6 +6,17 @@ The model architecture comes from this paper: https://arxiv.org/pdf/1509.01626.p
 
 ![Network architecture](plots/character_cnn.png)
 
+There are two variants: a large and a small. You can switch between by changing the configuration file.
+
+There are basically 6 convolutional layers:
+
+![Conv layers](plots/conv_layers.png)
+
+and and 2 fully connected layers:
+
+![Fully connected layers](plots/fc_layers.png)
+
+
 # Why you should care about character level CNNs
 
 - They are quite powerful in text classification (see paper's benchmark) iven though they have no notion of semantics
