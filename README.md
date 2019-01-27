@@ -8,21 +8,21 @@ The model architecture comes from this paper: https://arxiv.org/pdf/1509.01626.p
 
 There are two variants: a large and a small. You can switch between the two by changing the configuration file.
 
-There are basically 6 convolutional layers:
+This architecture has 6 convolutional layers:
 
 ![Conv layers](plots/conv_layers.png)
 
-and and 2 fully connected layers:
+and 2 fully connected layers:
 
 ![Fully connected layers](plots/fc_layers.png)
 
 ## Why you should care about character level CNNs
 
-- They are quite powerful in text classification (see paper's benchmark) iven though they have no notion of semantics
+- They are quite powerful in text classification (see paper's benchmark) even though they don't have any notion of semantics
 - You don't need to apply any text preprocessing (tokenization, lemmatization, stemming ...) while using them
-- They handle misspelled words and OOV (out-of-vocabulary) tokens very well when testing
-- They are faster to train compared to recurrent networks
-- They are lightweight since they don't require storing a large word embedding matrix, hence you can deploy them in production more easily
+- They handle misspelled words and OOV (out-of-vocabulary) tokens very well
+- They are faster to train compared to recurrent neural networks
+- They are lightweight since they don't require storing a large word embedding matrix. Hence, you can deploy them in production easily
 
 ## Results
 
@@ -57,22 +57,22 @@ At the root of the project, you will have:
 
 ### Training
 
-Launch train.py with the following arguments (their default values are written in train.py)
+Launch train.py with the following arguments:
 
-- `data_path`: path for the data. It should be csv file with a column for text and a column for the label
-- `validation_split`: ratio of train data (default to 0.8), the remaining is for validation.
+- `data_path`: path of the data. Data should be in csv format with at least a column for text and a column for the label
+- `validation_split`: ratio of train data (default to 0.8), the remaining portion is for validation
 - `label_column`: column name of the labels
-- `text_column`: column name of the text 
-- `max_rows`: the maximum number of rows to load from the dataset. (I use this when testing)
+- `text_column`: column name of the texts 
+- `max_rows`: the maximum number of rows to load from the dataset. (I mainly use this for testing to go faster)
 - `chunksize`: size of the chunks when loading the data using pandas
 - `encoding`: default to utf-8
-- `steps`: 
+- `steps`: text preprocessing steps to include on the text like hashtag or url removal
 - `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{} (normally you should not modify it)
 - `number_of_characters`: default 68
-- `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters, of accented characters.
+- `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters or accented characters
 - `config_path`: this is path of the config json file
 - `size`: large / small, depending on the model you choose
-- `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data.
+- `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data
 - `number_of_classes`: depends on the problem. default to 2 (binary classification problem)
 - `epochs`: number of epochs 
 - `batch_size`: batch size, default to 128.
@@ -86,13 +86,9 @@ Launch train.py with the following arguments (their default values are written i
 - `output`: path of the folder where models are saved
 - `model_name`: prefix name of saved models
 
-
 **Example usage**:
 
 python train.py --data_path=/data/tweets.csv --max_rows=200000 
-
-### Testing
-
 
 ## License
 
