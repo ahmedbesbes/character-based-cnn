@@ -67,26 +67,27 @@ Launch train.py with the following arguments (their default values are written i
 - `chunksize`: size of the chunks when loading the data using pandas
 - `encoding`: default to utf-8
 - `steps`: 
-- `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{} 
-- `number_of_characters`
-- `extra_characters`
-- `config_path`
-- `size`
-- `max_length`
-- `number_of_classes`
-- `epochs`
-- `batch_size`
-- `optimizer`
-- `learning_rate`
-- `schedule`
-- `patience`
-- `checkpoint`
-- `workers`
-- `log_path`
-- `output`
-- `model_name`
+- `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{} (normally you should not modify it)
+- `number_of_characters`: default 68
+- `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters, of accented characters.
+- `config_path`: this is path of the config json file
+- `size`: large / small, depending on the model you choose
+- `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data.
+- `number_of_classes`: depends on the problem. default to 2 (binary classification problem)
+- `epochs`: number of epochs 
+- `batch_size`: batch size, default to 128.
+- `optimizer`: adam or sgd, default to sgd
+- `learning_rate`: default to 0.01
+- `schedule`: number of epochs by which the learning rate decreases (learning rate scheduling works only for sgd), default to 3. set it to 0 to disable it
+- `patience`: maximum number of epochs to wait without improvement of the validation loss, default to 3
+- `checkpoint`: To choose to save the model on disk or not. default to 1, set to 0 to disable model checkpoint
+- `workers`: number of workers in PyTorch DataLoader, default to 1
+- `log_path`: path of tensorboard log file
+- `output`: path of the folder where models are saved
+- `model_name`: prefix name of saved models
 
-Example:
+
+**Example usage**:
 
 python train.py --data_path=/data/tweets.csv --max_rows=200000 
 
