@@ -32,3 +32,14 @@ The results are petty amazing: the F1 score is over 0.94 on the test set.
 - PyTorch 0.4.1
 - tensorboardX
 
+# Structure of the code
+
+At the root of the project, you will have:
+
+- **train.py**: used for training a model
+- **predict.py**: used for the testing and inference
+- **config.json**: a configuration file for storing model parameters (number of filters, neurons)
+- **src**: a folder that contains:
+  - **cnn_model.py**
+  - **data_loader.py**
+  - **utils.py**
