@@ -50,6 +50,17 @@ At the root of the project, you will have:
 - **predict.py**: used for the testing and inference
 - **config.json**: a configuration file for storing model parameters (number of filters, neurons)
 - **src**: a folder that contains:
-  - **cnn_model.py**
-  - **data_loader.py**
-  - **utils.py**
+  - **cnn_model.py**: the actual CNN model (model initialization and forward method)
+  - **data_loader.py**: the script responsible of passing the data to the training after processing it
+  - **utils.py**: a set of utility functions for text preprocessing (url/hashtag/user_mention removal)
+
+# How to use the code
+
+For training:
+
+
+For testing:
+
+
+
+
