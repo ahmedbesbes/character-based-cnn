@@ -6,7 +6,7 @@ The model architecture comes from this paper: https://arxiv.org/pdf/1509.01626.p
 
 ![Network architecture](plots/character_cnn.png)
 
-There are two variants: a large and a small. You can switch between by changing the configuration file.
+There are two variants: a large and a small. You can switch between the two by changing the configuration file.
 
 There are basically 6 convolutional layers:
 
@@ -59,15 +59,15 @@ At the root of the project, you will have:
 
 Launch train.py with the following arguments (their default values are written in train.py)
 
-- `data_path`
-- `validation_split`
-- `label_column`
-- `text_column`
-- `max_rows`
-- `chunksize`
-- `encoding`
-- `steps`
-- `alphabet`
+- `data_path`: path for the data. It should be csv file with a column for text and a column for the label
+- `validation_split`: ratio of train data (default to 0.8), the remaining is for validation.
+- `label_column`: column name of the labels
+- `text_column`: column name of the text 
+- `max_rows`: the maximum number of rows to load from the dataset. (I use this when testing)
+- `chunksize`: size of the chunks when loading the data using pandas
+- `encoding`: default to utf-8
+- `steps`: 
+- `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{} 
 - `number_of_characters`
 - `extra_characters`
 - `config_path`
