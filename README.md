@@ -1,4 +1,4 @@
-# Character Based CNN
+## Character Based CNN
 
 This repo contains a PyTorch implementation of a character-level convolutional neural network for text classification.
 
@@ -17,7 +17,7 @@ and and 2 fully connected layers:
 ![Fully connected layers](plots/fc_layers.png)
 
 
-# Why you should care about character level CNNs
+## Why you should care about character level CNNs
 
 - They are quite powerful in text classification (see paper's benchmark) iven though they have no notion of semantics
 - You don't need to apply any text preprocessing (tokenization, lemmatization, stemming ...) while using them
@@ -25,7 +25,7 @@ and and 2 fully connected layers:
 - They are faster to train compared to recurrent networks
 - They are lightweight since they don't require storing a large word embedding matrix, hence you can deploy them in production more easily
 
-# Results
+## Results
 
 I have tested this model on a set of french labeled customer reviews (of over 3 millions rows). I reported the metrics in TensorboardX. 
 
@@ -34,7 +34,7 @@ The results are petty amazing: the F1 score is over 0.94 on the test set.
 
 ![Training metrics](plots/training_metrics.PNG)
 
-# Dependencies
+## Dependencies
 
 - numpy 
 - pandas
@@ -42,7 +42,7 @@ The results are petty amazing: the F1 score is over 0.94 on the test set.
 - PyTorch 0.4.1
 - tensorboardX
 
-# Structure of the code
+## Structure of the code
 
 At the root of the project, you will have:
 
@@ -54,7 +54,7 @@ At the root of the project, you will have:
   - **data_loader.py**: the script responsible of passing the data to the training after processing it
   - **utils.py**: a set of utility functions for text preprocessing (url/hashtag/user_mention removal)
 
-# How to use the code
+## How to use the code
 
 For training:
 
@@ -62,5 +62,6 @@ For training:
 For testing:
 
 
+## License
 
-
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for det
