@@ -1,10 +1,9 @@
 # Character Based CNN
 
-PyTorch implementation of a character-level convolutional neural network for text classification
+This repo contains a PyTorch implementation of a character-level convolutional neural network for text classification.
 
-Paper: https://arxiv.org/pdf/1509.01626.pdf
+The model architecture comes from this paper: https://arxiv.org/pdf/1509.01626.pdf
 
- 
 ![Network architecture](plots/character_cnn.png)
 
 # Why you should care about character level CNNs
