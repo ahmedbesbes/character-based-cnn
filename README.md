@@ -16,7 +16,6 @@ and and 2 fully connected layers:
 
 ![Fully connected layers](plots/fc_layers.png)
 
-
 ## Why you should care about character level CNNs
 
 - They are quite powerful in text classification (see paper's benchmark) iven though they have no notion of semantics
@@ -56,10 +55,42 @@ At the root of the project, you will have:
 
 ## How to use the code
 
-For training:
+### Training
 
+Launch train.py with the following arguments (their default values are written in train.py)
 
-For testing:
+- `data_path`
+- `validation_split`
+- `label_column`
+- `text_column`
+- `max_rows`
+- `chunksize`
+- `encoding`
+- `steps`
+- `alphabet`
+- `number_of_characters`
+- `extra_characters`
+- `config_path`
+- `size`
+- `max_length`
+- `number_of_classes`
+- `epochs`
+- `batch_size`
+- `optimizer`
+- `learning_rate`
+- `schedule`
+- `patience`
+- `checkpoint`
+- `workers`
+- `log_path`
+- `output`
+- `model_name`
+
+Example:
+
+python train.py --data_path=/data/tweets.csv --max_rows=200000 
+
+### Testing
 
 
 ## License
