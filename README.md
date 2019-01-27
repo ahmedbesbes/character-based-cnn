@@ -9,7 +9,7 @@ Paper: https://arxiv.org/pdf/1509.01626.pdf
 
 # Why you should care about character level CNNs
 
-- They are quite powerful in text classification (see paper's benchmark) if though they have no notion of semantics
+- They are quite powerful in text classification (see paper's benchmark) iven though they have no notion of semantics
 - You don't need to apply any text preprocessing (tokenization, lemmatization, stemming ...) while using them
 - They handle misspelled words and OOV (out-of-vocabulary) tokens very well when testing
 - They are faster to train compared to recurrent networks
@@ -17,13 +17,18 @@ Paper: https://arxiv.org/pdf/1509.01626.pdf
 
 # Results
 
-I have tested this model on a set of french labeled customer reviews (over 3 millions). I reported the metrics in TensorboardX. 
+I have tested this model on a set of french labeled customer reviews (of over 3 millions rows). I reported the metrics in TensorboardX. 
 
-The results are petty amazing.
+The results are petty amazing: the F1 score is over 0.94 on the test set.
+
 
 ![Training metrics](plots/training_metrics.PNG)
 
+# Dependencies
 
-
-
+- numpy 
+- pandas
+- sklearn
+- PyTorch 0.4.1
+- tensorboardX
 
