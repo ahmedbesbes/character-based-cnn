@@ -35,7 +35,7 @@ and 2 fully connected layers:
 
 - They are quite powerful in text classification (see paper's benchmark) even though they don't have any notion of semantics
 - You don't need to apply any text preprocessing (tokenization, lemmatization, stemming ...) while using them
-- They handle misspelled words and OOV (out-of-vocabulary) tokens very well
+- They handle misspelled words and OOV (out-of-vocabulary) tokens
 - They are faster to train compared to recurrent neural networks
 - They are lightweight since they don't require storing a large word embedding matrix. Hence, you can deploy them in production easily
 
@@ -43,8 +43,12 @@ and 2 fully connected layers:
 
 I have tested this model on a set of french labeled customer reviews (of over 3 millions rows). I reported the metrics in TensorboardX. 
 
-The results are petty amazing: the F1 score is over 0.94 on the test set.
+I got the following results
 
+||F1 score|Accuracy|
+|-|-|-|
+|train||0.9366|
+|test|||
 
 ![Training metrics](plots/training_metrics.PNG)
 
