@@ -13,11 +13,23 @@ There are two variants: a large and a small. You can switch between the two by c
 
 This architecture has 6 convolutional layers:
 
-![Conv layers](plots/conv_layers.png)
+|Layer|Large Feature|Small Feature|Kernel|Pool|
+|-|-|-|-|-|
+|1|1024|256|7|3|
+|2|1024|256|7|3|
+|3|1024|256|3|N/A|
+|4|1024|256|3|N/A|
+|5|1024|256|3|N/A|
+|6|1024|256|3|3|
 
 and 2 fully connected layers:
 
-![Fully connected layers](plots/fc_layers.png)
+|Layer|Output Units Large|Output Units Small|
+|-|-|-|
+|7|2048|1024|
+|8|2048|1024|
+|9|Depends on the problem|Depends on the problem|
+
 
 ## Why you should care about character level CNNs
 
