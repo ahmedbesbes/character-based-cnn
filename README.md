@@ -41,7 +41,7 @@ They have very nice properties:
 - They are faster to train compared to recurrent neural networks
 - They are lightweight since they don't require storing a large word embedding matrix. Hence, you can deploy them in production easily
 
-## Results
+## Training a sentiment classifier on french customer reviews
 
 I have tested this model on a set of french labeled customer reviews (of over 3 millions rows). I reported the metrics in TensorboardX. 
 
@@ -53,6 +53,13 @@ I got the following results
 |test|0.945|0.915|
 
 ![Training metrics](plots/training_metrics.PNG)
+
+## Download the pretrained models [more to come :)]
+
+- French customer reviews (3M documents):
+  - set max_length to 300
+  - use extra_characters="éàèùâêîôûçëïü" (accented letters)
+  
 
 ## Dependencies
 
