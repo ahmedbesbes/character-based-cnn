@@ -108,7 +108,24 @@ Launch train.py with the following arguments:
 
 **Example usage**:
 
-python train.py --data_path=/data/tweets.csv --max_rows=200000 
+python train.py --data_path=/data/tweets.csv --max_rows=200000
+
+### Prediction
+
+Launch predict.py with the following arguments:
+
+- `model`: path of the pre-trained model
+- `text`: input text
+- `steps`: list of preprocessing steps, default to lower
+- `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{}
+- `number_of_characters`: default oto 68
+- `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters or accented characters
+- `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data
+
+**Example usage**:
+python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150
+
+
 
 ## License
 
