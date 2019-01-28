@@ -1,5 +1,8 @@
 ## Character Based CNN
 
+[![MIT](https://img.shields.io/badge/license-MIT-5eba00.svg)](https://github.com/ahmedbesbes/character-based-cnn/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/twitter/follow/ahmed_besbes_.svg?label=Follow&style=social)](https://twitter.com/ahmed_besbes_)
+
 This repo contains a PyTorch implementation of a character-level convolutional neural network for text classification.
 
 The model architecture comes from this paper: https://arxiv.org/pdf/1509.01626.pdf
