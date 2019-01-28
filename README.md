@@ -118,7 +118,7 @@ Launch predict.py with the following arguments:
 - `text`: input text
 - `steps`: list of preprocessing steps, default to lower
 - `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{}
-- `number_of_characters`: default oto 68
+- `number_of_characters`: default to 68
 - `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters or accented characters
 - `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data
 
