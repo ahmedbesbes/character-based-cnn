@@ -55,6 +55,7 @@ The results are petty amazing: the F1 score is over 0.94 on the test set.
 - sklearn
 - PyTorch 0.4.1
 - tensorboardX
+- Tensorflow (to be able to run TensorboardX)
 
 ## Structure of the code
 
