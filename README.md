@@ -47,8 +47,8 @@ I got the following results
 
 ||F1 score|Accuracy|
 |-|-|-|
-|train||0.9366|
-|test|||
+|train|0.965|0.9366|
+|test|0.945|0.915|
 
 ![Training metrics](plots/training_metrics.PNG)
 
