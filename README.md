@@ -33,6 +33,8 @@ and 2 fully connected layers:
 
 ## Why you should care about character level CNNs
 
+They have very nice properties:
+
 - They are quite powerful in text classification (see paper's benchmark) even though they don't have any notion of semantics
 - You don't need to apply any text preprocessing (tokenization, lemmatization, stemming ...) while using them
 - They handle misspelled words and OOV (out-of-vocabulary) tokens
