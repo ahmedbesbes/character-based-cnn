@@ -110,7 +110,7 @@ Launch train.py with the following arguments:
 
 Example usage:
 
-python train.py --data_path=/data/tweets.csv --max_rows=200000
+`python train.py --data_path=/data/tweets.csv --max_rows=200000`
 
 
 ### Plotting results to TensorboardX
@@ -134,7 +134,8 @@ Launch predict.py with the following arguments:
 - `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data
 
 Example usage:
-python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150
+
+`python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150`
 
 ## Download pretrained models
 
