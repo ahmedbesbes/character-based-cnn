@@ -110,14 +110,17 @@ Launch train.py with the following arguments:
 
 Example usage:
 
-`python train.py --data_path=/data/tweets.csv --max_rows=200000`
-
+```bash
+python train.py --data_path=/data/tweets.csv --max_rows=200000
+```
 
 ### Plotting results to TensorboardX
 
 Run this command at the root of the project:
 
-`tensorboard --logdir=./logs/ --port=6006`
+```bash
+tensorboard --logdir=./logs/ --port=6006
+```
 
 Then go to: http://localhost:6006 (or whatever host you're using)
 
@@ -135,7 +138,10 @@ Launch predict.py with the following arguments:
 
 Example usage:
 
-`python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150`
+```bash
+python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150
+
+```
 
 ## Download pretrained models
 
