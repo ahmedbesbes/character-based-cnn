@@ -108,9 +108,18 @@ Launch train.py with the following arguments:
 - `output`: path of the folder where models are saved
 - `model_name`: prefix name of saved models
 
-**Example usage**:
+Example usage:
 
 python train.py --data_path=/data/tweets.csv --max_rows=200000
+
+
+### Plotting results to TensorboardX
+
+Run this command at the root of the project:
+
+`tensorboard --logdir=./logs/ --port=6006`
+
+Then go to: http://localhost:6006 (or whatever host you're using)
 
 ### Prediction
 
@@ -124,7 +133,7 @@ Launch predict.py with the following arguments:
 - `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters or accented characters
 - `max_length`: the maximum length to fix for all the documents. default to 150 but should be adapted to your data
 
-**Example usage**:
+Example usage:
 python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150
 
 ## Download pretrained models
