@@ -54,13 +54,6 @@ I got the following results
 
 ![Training metrics](plots/training_metrics.PNG)
 
-## Download the pretrained models [more to come :)]
-
-- French customer reviews (3M documents):
-  - set max_length to 300
-  - use extra_characters="éàèùâêîôûçëïü" (accented letters)
-  
-
 ## Dependencies
 
 - numpy 
@@ -134,7 +127,14 @@ Launch predict.py with the following arguments:
 **Example usage**:
 python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_length=150
 
+## Download pretrained models
 
+- Sentiment analysis model on French customer reviews (3M documents): [download link](https://drive.google.com/file/d/1pmzeac-Vx07ScBL0S-xJ5EqRJYGdtWvh/view?usp=sharing)
+
+  When using it:
+  - set max_length to 300
+  - use extra_characters="éàèùâêîôûçëïü" (accented letters)
+  
 
 ## License
 
