@@ -41,6 +41,12 @@ They have very nice properties:
 - They are faster to train compared to recurrent neural networks
 - They are lightweight since they don't require storing a large word embedding matrix. Hence, you can deploy them in production easily
 
+## Video tutorial
+
+If you're interested in how character CNN work as well as in the demo of this project you can check my youtube video tutorial.
+
+[![Character CNN](https://img.youtube.com/vi/CNY8VjJt-iQ/0.jpg)](https://www.youtube.com/watch?v=CNY8VjJt-iQ)
+
 ## Training a sentiment classifier on french customer reviews
 
 I have tested this model on a set of french labeled customer reviews (of over 3 millions rows). I reported the metrics in TensorboardX. 
