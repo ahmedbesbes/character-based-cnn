@@ -2,6 +2,7 @@
 
 [![MIT](https://img.shields.io/badge/license-MIT-5eba00.svg)](https://github.com/ahmedbesbes/character-based-cnn/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/follow/ahmed_besbes_.svg?label=Follow&style=social)](https://twitter.com/ahmed_besbes_)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat (https://github.com/ahmedbesbes/character-based-cnn/issues)
 
 This repo contains a PyTorch implementation of a character-level convolutional neural network for text classification.
 
