@@ -34,7 +34,12 @@ and 2 fully connected layers:
 
 If you're interested in how character CNN work as well as in the demo of this project you can check my youtube video tutorial.
 
-[![Character CNN](https://img.youtube.com/vi/CNY8VjJt-iQ/0.jpg)](https://www.youtube.com/watch?v=CNY8VjJt-iQ)
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=CNY8VjJt-iQ">
+    <img src="https://img.youtube.com/vi/CNY8VjJt-iQ/0.jpg">
+  </a>
+</p>
 
 ## Why you should care about character level CNNs
 
