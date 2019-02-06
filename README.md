@@ -164,7 +164,14 @@ python predict.py ./models/pretrained_model.pth --text="I love pizza !" --max_le
   When using it:
   - set max_length to 300
   - use extra_characters="éàèùâêîôûçëïü" (accented letters)
-  
+
+## Contributions - PR are welcome:
+
+Here's a non-exhaustive list of potential future features to add:
+
+- Adapt the loss for multi-class classification 
+- Log training and validation metrics for each epoch to a text file
+- Provide notebook tutorials
 
 ## License
 
