@@ -3,9 +3,7 @@
 [![MIT](https://img.shields.io/badge/license-MIT-5eba00.svg)](https://github.com/ahmedbesbes/character-based-cnn/blob/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/ahmedbesbes/character-based-cnn/issues)
 [![Twitter](https://img.shields.io/twitter/follow/ahmed_besbes_.svg?label=Follow&style=social)](https://twitter.com/ahmed_besbes_)
-[![Follow](https://img.shields.io/github/followers/ahmedbesbes.svg?label=Follow)](https://img.shields.io/github/followers/ahmedbesbes.svg?style=social)
-[![Stars](https://img.shields.io/github/stars/ahmedbesbes/character-based-cnn.svg?style=social)](https://img.shields.io/github/stars/ahmedbesbes/character-based-cnn.svg?style=social)
-
+[![Stars](https://img.shields.io/github/stars/ahmedbesbes/character-based-cnn.svg?style=social)](https://github.com/ahmedbesbes/character-based-cnn/stargazers)
 
 
 This repo contains a PyTorch implementation of a character-level convolutional neural network for text classification.
