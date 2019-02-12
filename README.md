@@ -93,6 +93,8 @@ At the root of the project, you will have:
 
 ### Training
 
+**The code currently works only on binary labels (0/1)**
+
 Launch train.py with the following arguments:
 
 - `data_path`: path of the data. Data should be in csv format with at least a column for text and a column for the label
