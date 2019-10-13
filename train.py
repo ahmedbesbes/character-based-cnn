@@ -125,7 +125,7 @@ def run(args, both_cases=False):
                          "num_workers": args.workers}
 
     full_dataset = MyDataset(args)
-    train_size = int(args.validation_split * len(full_dataset))
+    train_size = int((1 - args.validation_split) * len(full_dataset))
     validation_size = len(full_dataset) - train_size
     training_set, validation_set = torch.utils.data.random_split(
         full_dataset, [train_size, validation_size])
@@ -202,7 +202,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Character Based CNN for text classification')
     parser.add_argument('--data_path', type=str, default='./data/train.csv')
-    parser.add_argument('--validation_split', type=float, default=0.8)
+    parser.add_argument('--validation_split', type=float, default=0.2)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
     parser.add_argument('--max_rows', type=int, default=100000)
