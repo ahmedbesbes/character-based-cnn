@@ -38,11 +38,10 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         print('feature shape', features.shape)
         print('prediction shape', predictions.shape)
 
-        loss = criterion(predictions, labels)
-
         print("predictions", predictions)
         print("labels", labels)
-        print("loss :", loss)
+
+        loss = criterion(predictions, labels)
 
         loss.backward()
         optimizer.step()
