@@ -14,7 +14,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, WeightedRandomSampler
 from tensorboardX import SummaryWriter
 
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, f1_score
 from sklearn.model_selection import train_test_split
 
 from src.cnn_model import CharacterLevelCNN
@@ -81,8 +81,11 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 accuracies.avg
             ))
 
+    f1_train = f1_score(y_true, y_true, average='weighted')
+
     writer.add_scalar('Train/loss/epoch', losses.avg, epoch + iter)
     writer.add_scalar('Train/acc/epoch', accuracies.avg, epoch + iter)
+    writer.add_scalar('Train/f1/epoch', f1_train, epoch + iter)
 
     report = classification_report(y_true, y_pred)
     print(report)
@@ -95,7 +98,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
         f.write('*' * 50)
         f.write('\n')
 
-    return losses.avg.item(), accuracies.avg.item()
+    return losses.avg.item(), accuracies.avg.item(), f1_train
 
 
 def evaluate(model, validation_generator, criterion, epoch, writer, log_file, print_every=25):
@@ -149,8 +152,11 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 accuracies.avg
             ))
 
+    f1_test = f1_score(y_true, y_true, average='weighted')
+
     writer.add_scalar('Test/loss/epoch', losses.avg, epoch + iter)
     writer.add_scalar('Test/acc/epoch', accuracies.avg, epoch + iter)
+    writer.add_scalar('Test/f1/epoch', f1_test, epoch + iter)
 
     report = classification_report(y_true, y_pred)
     print(report)
@@ -162,8 +168,8 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
         f.write(report)
         f.write('=' * 50)
         f.write('\n')
-        
-    return losses.avg.item(), accuracies.avg.item()
+
+    return losses.avg.item(), accuracies.avg.item(), f1_test
 
 
 def run(args, both_cases=False):
@@ -237,24 +243,24 @@ def run(args, both_cases=False):
             model.parameters(), lr=args.learning_rate
         )
 
-    best_loss = 1e10
+    best_f1 = 0
     best_epoch = 0
 
     for epoch in range(args.epochs):
-        training_loss, training_accuracy = train(model,
-                                                 training_generator,
-                                                 optimizer,
-                                                 criterion,
-                                                 epoch,
-                                                 writer,
-                                                 log_file)
+        training_loss, training_accuracy, train_f1 = train(model,
+                                                           training_generator,
+                                                           optimizer,
+                                                           criterion,
+                                                           epoch,
+                                                           writer,
+                                                           log_file)
 
-        validation_loss, validation_accuracy = evaluate(model,
-                                                        validation_generator,
-                                                        criterion,
-                                                        epoch,
-                                                        writer,
-                                                        log_file)
+        validation_loss, validation_accuracy, validation_f1 = evaluate(model,
+                                                                       validation_generator,
+                                                                       criterion,
+                                                                       epoch,
+                                                                       writer,
+                                                                       log_file)
 
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
               format(epoch + 1, args.epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
@@ -270,20 +276,19 @@ def run(args, both_cases=False):
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = current_lr
 
-        # early stopping
-        if validation_loss < best_loss:
-            best_loss = validation_loss
+        # model checkpoint
+
+        if validation_f1 < best_f1:
+            best_f1 = validation_f1
             best_epoch = epoch
             if args.checkpoint == 1:
-                torch.save(model, args.output + 'char_cnn_epoch_{}_{}_{}_loss_{}_acc_{}.pth'.format(args.model_name,
-                                                                                                    epoch,
-                                                                                                    optimizer.state_dict()[
-                                                                                                        'param_groups'][0]['lr'],
-                                                                                                    round(
-                                                                                                        validation_loss, 4),
-                                                                                                    round(
-                                                                                                        validation_accuracy, 4)
-                                                                                                    ))
+                torch.save(model, args.output + 'model_epoch_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
+                                                                                                 optimizer.state_dict()['param_groups'][0]['lr'],
+                                                                                                 round(validation_loss, 4),
+                                                                                                 round(validation_accuracy, 4),
+                                                                                                 round(validation_f1, 4)
+                                                                                                 ))
+
         if bool(args.early_stopping):
             if epoch - best_epoch > args.patience > 0:
                 print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
@@ -294,7 +299,8 @@ def run(args, both_cases=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Character Based CNN for text classification')
-    parser.add_argument('--data_path', type=str, default='./data/train.csv')
+    parser.add_argument('--data_path', type=str,
+                        default='./data/train.csv')
     parser.add_argument('--validation_split', type=float, default=0.2)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
@@ -304,7 +310,8 @@ if __name__ == "__main__":
     parser.add_argument('--steps', nargs='+', default=['lower'])
     parser.add_argument('--group_labels', type=str,
                         default=None, choices=[None, 'binarize'])
-    parser.add_argument('--use_sampler', type=int, default=0, choices=[0, 1])
+    parser.add_argument('--use_sampler', type=int,
+                        default=0, choices=[0, 1])
 
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
@@ -321,15 +328,18 @@ if __name__ == "__main__":
     parser.add_argument('--optimizer', type=str,
                         choices=['adam', 'sgd'], default='sgd')
     parser.add_argument('--learning_rate', type=float, default=0.01)
-    parser.add_argument('--class_weights', type=int, default=0, choices=[0, 1])
+    parser.add_argument('--class_weights', type=int,
+                        default=0, choices=[0, 1])
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--early_stopping', type=int,
                         default=0, choices=[0, 1])
-    parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
+    parser.add_argument('--checkpoint', type=int,
+                        choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='./logs/')
-    parser.add_argument('--flush_history', type=int, default=1, choices=[0, 1])
+    parser.add_argument('--flush_history', type=int,
+                        default=1, choices=[0, 1])
     parser.add_argument('--output', type=str, default='./models/')
     parser.add_argument('--model_name', type=str)
 
