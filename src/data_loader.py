@@ -32,6 +32,8 @@ def load_data(args):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
         aux_df = aux_df[(aux_df[args.text_column].map(len) > 10) & (aux_df[args.text_column].map(len) < 500)]
+        aux_df = aux_df[aux_df[args.label_column] != 3]
+
         aux_df['processed_text'] = (aux_df[args.text_column]
                                     .map(lambda text: utils.process_text(args.steps, text)))
         texts += aux_df['processed_text'].tolist()
@@ -39,7 +41,7 @@ def load_data(args):
 
     if args.group_labels == 'binarize':
         labels = list(
-            map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
+            map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
 
     number_of_classes = len(set(labels))
 
