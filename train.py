@@ -12,6 +12,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tensorboardX import SummaryWriter
 
+from sklearn.metrics import classification_report
+
 from src.cnn_model import CharacterLevelCNN
 from src.data_loader import MyDataset
 from src import utils
@@ -26,6 +28,9 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
     progress_bar = tqdm(enumerate(training_generator),
                         total=num_iter_per_epoch)
 
+    y_true = []
+    y_pred = []
+
     for iter, batch in progress_bar:
         features, labels = batch
         if torch.cuda.is_available():
@@ -34,6 +39,10 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
 
         optimizer.zero_grad()
         predictions = model(features)
+
+        y_true += labels.cpu().numpy().tolist()
+        y_pred += torch.max(predictions, 1).cpu().numpy().tolist()
+
         loss = criterion(predictions, labels)
 
         loss.backward()
@@ -68,6 +77,9 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
                 accuraries.avg
             ))
 
+    report = classification_report(y_true, y_true)
+    print(report)
+    
     return losses.avg, accuraries.avg
 
 
