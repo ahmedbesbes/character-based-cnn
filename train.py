@@ -175,6 +175,7 @@ def run(args, both_cases=False):
     validation_set = MyDataset(val_texts, val_labels, args)
 
     if bool(args.use_sampler):
+        train_sample_weights = torch.from_numpy(train_sample_weights)
         sampler = WeightedRandomSampler(train_sample_weights.type(
             'torch.DoubleTensor'), len(train_sample_weights))
         training_params['sampler'] = sampler

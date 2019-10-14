@@ -9,13 +9,13 @@ from . import utils
 
 import torch
 
+
 def get_sample_weights(labels):
     counter = Counter(labels)
     counter = dict(counter)
     for k in counter:
         counter[k] = 1 / counter[k]
     sample_weights = np.array([counter[l] for l in labels])
-    sample_weights = torch.from_numpy(sample_weights)
     return sample_weights
 
 
@@ -41,7 +41,7 @@ def load_data(args):
             map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
 
     number_of_classes = len(set(labels))
-    
+
     if number_of_classes > 2:
         labels = [label - 1 for label in labels]
 
@@ -81,4 +81,8 @@ class MyDataset(Dataset):
             data = np.zeros(
                 (self.max_length, self.number_of_characters), dtype=np.float32)
         label = self.labels[index]
+
+        data = torch.Tensor(data)
+        label = torch.Tensor(label)
+
         return data, label
