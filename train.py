@@ -34,6 +34,10 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
 
         optimizer.zero_grad()
         predictions = model(features)
+
+        print('feature shape', features.shape)
+        print('prediction shape', predictions.shape)
+
         loss = criterion(predictions, labels)
         loss.backward()
         optimizer.step()
@@ -147,7 +151,6 @@ def run(args, both_cases=False):
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    # model = CharacterLevelCNN(args)  
     model = CharacterLevelCNN(args)
     if torch.cuda.is_available():
         model.cuda()
