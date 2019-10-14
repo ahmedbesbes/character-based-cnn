@@ -23,7 +23,7 @@ from src import utils
 from src.model import CharacterLevelCNN
 
 
-def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
+def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, print_every=25):
     model.train()
     losses = utils.AverageMeter()
     accuraries = utils.AverageMeter()
@@ -84,10 +84,16 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
     report = classification_report(y_true, y_pred)
     print(report)
 
+    with open(log_file, 'a') as f:
+        f.write(f'Training on Epoch {epoch}')
+        f.write(f'Average loss {losses.avg.item()}')
+        f.write(f'Average accuracy {accuraries.avg.item()}')
+        f.write(report)
+
     return losses.avg.item(), accuraries.avg.item()
 
 
-def evaluate(model, validation_generator, criterion, epoch, writer, print_every=25):
+def evaluate(model, validation_generator, criterion, epoch, writer, log_file, print_every=25):
     model.eval()
     losses = utils.AverageMeter()
     accuraries = utils.AverageMeter()
@@ -140,6 +146,12 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
 
     report = classification_report(y_true, y_pred)
     print(report)
+    
+    with open(log_file, 'a') as f:
+        f.write(f'Validation on Epoch {epoch}')
+        f.write(f'Average loss {losses.avg.item()}')
+        f.write(f'Average accuracy {accuraries.avg.item()}')
+        f.write(report)
 
     return losses.avg.item(), accuraries.avg.item()
 
@@ -155,6 +167,7 @@ def run(args, both_cases=False):
     now = datetime.now()
     logdir = args.log_path + now.strftime("%Y%m%d-%H%M%S") + "/"
     os.makedirs(logdir)
+    log_file = logdir + 'log.txt'
     writer = SummaryWriter(logdir)
 
     batch_size = args.batch_size
@@ -223,13 +236,15 @@ def run(args, both_cases=False):
                                                  optimizer,
                                                  criterion,
                                                  epoch,
-                                                 writer)
+                                                 writer,
+                                                 log_file)
 
         validation_loss, validation_accuracy = evaluate(model,
                                                         validation_generator,
                                                         criterion,
                                                         epoch,
-                                                        writer)
+                                                        writer,
+                                                        logdir)
 
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
               format(epoch + 1, args.epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
