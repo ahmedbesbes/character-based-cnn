@@ -77,7 +77,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
                 accuraries.avg
             ))
 
-    report = classification_report(y_true, y_true)
+    report = classification_report(y_true, y_pred)
     print(report)
 
     return losses.avg, accuraries.avg
