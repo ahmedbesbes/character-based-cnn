@@ -179,6 +179,7 @@ def run(args, both_cases=False):
         sampler = WeightedRandomSampler(train_sample_weights.type(
             'torch.DoubleTensor'), len(train_sample_weights))
         training_params['sampler'] = sampler
+        training_params['shuffle'] = False
 
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
