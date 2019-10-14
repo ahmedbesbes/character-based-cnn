@@ -4,7 +4,7 @@ import torch.nn as nn
 
 
 class CharacterLevelCNN(nn.Module):
-    def __init__(self, args):
+    def __init__(self, args, number_of_classes):
         super(CharacterLevelCNN, self).__init__()
 
         # define conv layers
@@ -52,7 +52,7 @@ class CharacterLevelCNN(nn.Module):
 
         self.fc1 = nn.Linear(self.output_dimension, 1024)
         self.fc2 = nn.Linear(1024, 1024)
-        self.fc3 = nn.Linear(1024, args.number_of_classes)
+        self.fc3 = nn.Linear(1024, number_of_classes)
 
         # initialize weights
 

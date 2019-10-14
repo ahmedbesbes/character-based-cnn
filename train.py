@@ -153,6 +153,8 @@ def run(args, both_cases=False):
                          "num_workers": args.workers}
 
     full_dataset = MyDataset(args)
+    number_of_classes = full_dataset.number_of_characters
+
     train_size = int((1 - args.validation_split) * len(full_dataset))
     validation_size = len(full_dataset) - train_size
     training_set, validation_set = torch.utils.data.random_split(
@@ -160,7 +162,7 @@ def run(args, both_cases=False):
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(args)
+    model = CharacterLevelCNN(args, number_of_classes)
     if torch.cuda.is_available():
         model.cuda()
 
@@ -237,6 +239,7 @@ if __name__ == "__main__":
     parser.add_argument('--chunksize', type=int, default=50000)
     parser.add_argument('--encoding', type=str, default='utf-8')
     parser.add_argument('--steps', nargs='+', default=['lower'])
+    parser.add_argument('--group_labels', type=str, default=None, choices=[None, 'binarize'])
 
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
@@ -248,7 +251,6 @@ if __name__ == "__main__":
                         choices=['small', 'large'], default='small')
 
     parser.add_argument('--max_length', type=int, default=150)
-    parser.add_argument('--number_of_classes', type=int, default=2)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--optimizer', type=str,

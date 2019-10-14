@@ -39,11 +39,15 @@ class MyDataset(Dataset):
             texts += aux_df['processed_text'].tolist()
             labels += aux_df[args.label_column].tolist()
 
+        if args.group_labels == 'binarize':
+            labels = list(map(lambda l: {0: 0, 1: 0, 2: 0, 3: 1, 4: 1}[l], labels))
+
         print('data loaded successfully with {0} rows'.format(len(texts)))
 
         self.texts = texts
         self.labels = [label - 1 for label in labels]
         self.length = len(self.labels)
+        self.number_of_classes = len(set(self.labels))
 
     def __len__(self):
         return self.length
