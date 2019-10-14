@@ -30,7 +30,7 @@ def load_data(args):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
         aux_df['processed_text'] = (aux_df[args.text_column]
-                                    .map(lambda text: utils.process_text(self.steps, text)))
+                                    .map(lambda text: utils.process_text(args.steps, text)))
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
