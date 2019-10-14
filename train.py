@@ -39,6 +39,11 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         print('prediction shape', predictions.shape)
 
         loss = criterion(predictions, labels)
+
+        print("predictions", predictions)
+        print("labels", labels)
+        print("loss :", loss)
+
         loss.backward()
         optimizer.step()
         training_metrics = utils.get_evaluation(labels.cpu().numpy(),
