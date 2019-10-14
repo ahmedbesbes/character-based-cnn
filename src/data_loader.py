@@ -44,9 +44,11 @@ class MyDataset(Dataset):
                 map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
 
         self.texts = texts
-        self.labels = [label - 1 for label in labels]
-        self.length = len(self.labels)
-        self.number_of_classes = len(set(self.labels))
+        self.number_of_classes = len(set(labels))
+        self.length = len(labels)
+
+        if self.number_of_classes > 2:
+            self.labels = [label - 1 for label in labels]
 
         print(
             f'data loaded successfully with {len(texts)} rows and {self.number_of_classes} labels')
