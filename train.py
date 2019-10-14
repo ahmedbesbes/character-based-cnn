@@ -15,7 +15,7 @@ from tensorboardX import SummaryWriter
 from src.cnn_model import CharacterLevelCNN
 from src.data_loader import MyDataset
 from src import utils
-
+import model
 
 def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
     model.train()
@@ -147,7 +147,8 @@ def run(args, both_cases=False):
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
-    model = CharacterLevelCNN(args)
+    # model = CharacterLevelCNN(args)
+    model = model.CharacterLevelCNN(args)
     if torch.cuda.is_available():
         model.cuda()
 
