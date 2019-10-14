@@ -42,6 +42,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         print("labels", labels)
 
         loss = criterion(predictions, labels)
+        print('loss value', loss)
 
         loss.backward()
         optimizer.step()
