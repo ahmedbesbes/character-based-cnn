@@ -4,6 +4,7 @@ import json
 import argparse
 import time
 from datetime import datetime
+from collections import Counter
 
 from tqdm import tqdm
 import numpy as np
@@ -188,7 +189,20 @@ def run(args, both_cases=False):
     if torch.cuda.is_available():
         model.cuda()
 
-    criterion = nn.CrossEntropyLoss()
+    if bool(args.class_weights):
+        class_counts = dict(Counter(train_labels))
+        m = max(class_counts.values())
+        for c in class_counts:
+            class_counts[c] = m / class_counts
+        weights = []
+        for k in sorted(class_counts.keys()):
+            weights.append(class_counts[k])
+        if torch.cuda.is_available():
+            weights = weights.cuda()
+            criterion = nn.CrossEntropyLoss(weight=weights)
+    else:
+        criterion = nn.CrossEntropyLoss()
+
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(
             model.parameters(), lr=args.learning_rate, momentum=0.9
@@ -280,6 +294,7 @@ if __name__ == "__main__":
     parser.add_argument('--optimizer', type=str,
                         choices=['adam', 'sgd'], default='sgd')
     parser.add_argument('--learning_rate', type=float, default=0.01)
+    parser.add_argument('--class_weights', type=int, default=0, choices=[0, 1])
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
