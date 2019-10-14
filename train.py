@@ -81,7 +81,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 accuracies.avg
             ))
 
-    f1_train = f1_score(y_true, y_true, average='weighted')
+    f1_train = f1_score(y_true, y_pred, average='weighted')
 
     writer.add_scalar('Train/loss/epoch', losses.avg, epoch + iter)
     writer.add_scalar('Train/acc/epoch', accuracies.avg, epoch + iter)
@@ -152,7 +152,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 accuracies.avg
             ))
 
-    f1_test = f1_score(y_true, y_true, average='weighted')
+    f1_test = f1_score(y_true, y_pred, average='weighted')
 
     writer.add_scalar('Test/loss/epoch', losses.avg, epoch + iter)
     writer.add_scalar('Test/acc/epoch', accuracies.avg, epoch + iter)
