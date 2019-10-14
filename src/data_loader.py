@@ -32,12 +32,13 @@ class MyDataset(Dataset):
                              encoding=self.encoding,
                              nrows=self.max_rows)
         for df_chunk in tqdm(chunks):
+            df_chunk = df_chunk[~df_chunk[args.text_column].isnull()]
             df_chunk['processed_text'] = (df_chunk[args.text_column]
                                           .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
             texts += df_chunk['processed_text'].tolist()
             labels += df_chunk[args.label_column].tolist()
 
-        print('data loaded successfully with {0} rows'.format(len(labels)))
+        print('data loaded successfully with {0} rows'.format(len(texts)))
 
         self.texts = texts
         self.labels = labels

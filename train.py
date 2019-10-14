@@ -19,8 +19,8 @@ from src import utils
 
 def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
     model.train()
-    losses = []
-    accuraries = []
+    losses = utils.AverageMeter()
+    accuraries = utils.AverageMeter()
     num_iter_per_epoch = len(training_generator)
 
     progress_bar = tqdm(enumerate(training_generator),
@@ -31,6 +31,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         if torch.cuda.is_available():
             features = features.cuda()
             labels = labels.cuda()
+
         optimizer.zero_grad()
         predictions = model(features)
         loss = criterion(predictions, labels)
@@ -39,15 +40,22 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         training_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                 predictions.cpu().detach().numpy(),
                                                 list_metrics=["accuracy", "f1"])
-        losses.append(loss.item())
-        accuraries.append(training_metrics["accuracy"])
+
+        losses.update(loss.data, features.size(0))
+        accuraries.update(training_metrics["accuracy"], features.size(0))
+
         f1 = training_metrics['f1']
 
-        writer.add_scalar('Train/Loss', loss.item(),
+        writer.add_scalar('Train/Loss',
+                          loss.item(),
                           epoch * num_iter_per_epoch + iter)
-        writer.add_scalar(
-            'Train/Accuracy', training_metrics['accuracy'], epoch * num_iter_per_epoch + iter)
-        writer.add_scalar('Train/f1', f1,
+
+        writer.add_scalar('Train/Accuracy',
+                          training_metrics['accuracy'],
+                          epoch * num_iter_per_epoch + iter)
+
+        writer.add_scalar('Train/f1',
+                          f1,
                           epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
@@ -55,17 +63,17 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
                 epoch + 1,
                 iter + 1,
                 num_iter_per_epoch,
-                np.mean(losses),
-                np.mean(accuraries)
+                losses.avg,
+                accuraries.avg
             ))
 
-    return np.mean(losses), np.mean(accuraries)
+    return losses.avg, accuraries.avg
 
 
 def evaluate(model, validation_generator, criterion, epoch, writer, print_every=25):
     model.eval()
-    losses = []
-    accuraries = []
+    losses = utils.AverageMeter()
+    accuraries = utils.AverageMeter()
     num_iter_per_epoch = len(validation_generator)
 
     for iter, batch in tqdm(enumerate(validation_generator), total=num_iter_per_epoch):
@@ -81,14 +89,20 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                                                   list_metrics=["accuracy", "f1"])
         accuracy = validation_metrics['accuracy']
         f1 = validation_metrics['f1']
-        losses.append(loss.item())
-        accuraries.append(accuracy)
 
-        writer.add_scalar('Test/Loss', loss.item(),
+        losses.update(loss.data, features.size(0))
+        accuraries.update(validation_metrics["accuracy"], features.size(0))
+
+        writer.add_scalar('Test/Loss',
+                          loss.item(),
                           epoch * num_iter_per_epoch + iter)
-        writer.add_scalar('Test/Accuracy', accuracy,
+
+        writer.add_scalar('Test/Accuracy',
+                          accuracy,
                           epoch * num_iter_per_epoch + iter)
-        writer.add_scalar('Test/f1', f1,
+
+        writer.add_scalar('Test/f1',
+                          f1,
                           epoch * num_iter_per_epoch + iter)
 
         if iter % print_every == 0:
@@ -96,8 +110,9 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                 epoch + 1,
                 iter + 1,
                 num_iter_per_epoch,
-                np.mean(losses),
-                np.mean(accuraries)))
+                losses.avg,
+                accuraries.avg
+            ))
 
     return np.mean(losses), np.mean(accuraries)
 
