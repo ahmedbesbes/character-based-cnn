@@ -275,6 +275,7 @@ if __name__ == "__main__":
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='./logs/')
+    parser.add_argument('--flush_history', type=int, default=1, choices=[0, 1])
     parser.add_argument('--output', type=str, default='./models/')
     parser.add_argument('--model_name', type=str)
 
