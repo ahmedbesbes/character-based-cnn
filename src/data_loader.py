@@ -26,6 +26,8 @@ def load_data(args):
                          chunksize=args.chunksize,
                          encoding=args.encoding,
                          nrows=args.max_rows)
+    texts = []
+    labels = []
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
