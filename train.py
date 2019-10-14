@@ -80,7 +80,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
     report = classification_report(y_true, y_pred)
     print(report)
 
-    return losses.avg, accuraries.avg
+    return losses.avg.item(), accuraries.avg.item()
 
 
 def evaluate(model, validation_generator, criterion, epoch, writer, print_every=25):
@@ -127,7 +127,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                 accuraries.avg
             ))
 
-    return losses.avg, accuraries.avg
+    return losses.avg.item(), accuraries.avg.item()
 
 
 def run(args, both_cases=False):
