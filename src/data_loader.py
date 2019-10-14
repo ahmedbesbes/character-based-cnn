@@ -49,6 +49,8 @@ class MyDataset(Dataset):
 
         if self.number_of_classes > 2:
             self.labels = [label - 1 for label in labels]
+        else:
+            self.labels = labels
 
         print(
             f'data loaded successfully with {len(texts)} rows and {self.number_of_classes} labels')
