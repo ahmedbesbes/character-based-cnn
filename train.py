@@ -81,6 +81,9 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 accuraries.avg
             ))
 
+    writer.add_scalar('Train/loss/epoch', losses.avg, epoch + i)
+    writer.add_scalar('Train/acc/epoch', accuracies.avg, epoch + i)
+
     report = classification_report(y_true, y_pred)
     print(report)
 
@@ -144,9 +147,12 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 accuraries.avg
             ))
 
+    writer.add_scalar('Val/loss/epoch', losses.avg, epoch + i)
+    writer.add_scalar('Val/acc/epoch', accuracies.avg, epoch + i)
+
     report = classification_report(y_true, y_pred)
     print(report)
-    
+
     with open(log_file, 'a') as f:
         f.write(f'Validation on Epoch {epoch}')
         f.write(f'Average loss {losses.avg.item()}')
@@ -210,7 +216,7 @@ def run(args, both_cases=False):
         weights = []
         for k in sorted(class_counts.keys()):
             weights.append(class_counts[k])
-        
+
         weights = torch.Tensor(weights)
         if torch.cuda.is_available():
             weights = weights.cuda()
@@ -244,7 +250,7 @@ def run(args, both_cases=False):
                                                         criterion,
                                                         epoch,
                                                         writer,
-                                                        logdir)
+                                                        log_file)
 
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
               format(epoch + 1, args.epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
@@ -314,7 +320,8 @@ if __name__ == "__main__":
     parser.add_argument('--class_weights', type=int, default=0, choices=[0, 1])
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
-    parser.add_argument('--early_stopping', type=int, default=0, choices=[0, 1])
+    parser.add_argument('--early_stopping', type=int,
+                        default=0, choices=[0, 1])
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='./logs/')
