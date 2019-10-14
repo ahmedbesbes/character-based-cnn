@@ -193,7 +193,7 @@ def run(args, both_cases=False):
         class_counts = dict(Counter(train_labels))
         m = max(class_counts.values())
         for c in class_counts:
-            class_counts[c] = m / class_counts
+            class_counts[c] = m / class_counts[c]
         weights = []
         for k in sorted(class_counts.keys()):
             weights.append(class_counts[k])
