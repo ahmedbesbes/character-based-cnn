@@ -83,6 +83,4 @@ class MyDataset(Dataset):
         label = self.labels[index]
 
         data = torch.Tensor(data)
-        label = torch.Tensor(label)
-
         return data, label
