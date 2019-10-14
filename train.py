@@ -26,7 +26,7 @@ from src.model import CharacterLevelCNN
 def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, print_every=25):
     model.train()
     losses = utils.AverageMeter()
-    accuraries = utils.AverageMeter()
+    accuracies = utils.AverageMeter()
     num_iter_per_epoch = len(training_generator)
 
     progress_bar = tqdm(enumerate(training_generator),
@@ -56,7 +56,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                                                 list_metrics=["accuracy", "f1"])
 
         losses.update(loss.data, features.size(0))
-        accuraries.update(training_metrics["accuracy"], features.size(0))
+        accuracies.update(training_metrics["accuracy"], features.size(0))
 
         f1 = training_metrics['f1']
 
@@ -78,7 +78,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 iter + 1,
                 num_iter_per_epoch,
                 losses.avg,
-                accuraries.avg
+                accuracies.avg
             ))
 
     writer.add_scalar('Train/loss/epoch', losses.avg, epoch + iter)
@@ -90,16 +90,16 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
     with open(log_file, 'a') as f:
         f.write(f'Training on Epoch {epoch}')
         f.write(f'Average loss {losses.avg.item()}')
-        f.write(f'Average accuracy {accuraries.avg.item()}')
+        f.write(f'Average accuracy {accuracies.avg.item()}')
         f.write(report)
 
-    return losses.avg.item(), accuraries.avg.item()
+    return losses.avg.item(), accuracies.avg.item()
 
 
 def evaluate(model, validation_generator, criterion, epoch, writer, log_file, print_every=25):
     model.eval()
     losses = utils.AverageMeter()
-    accuraries = utils.AverageMeter()
+    accuracies = utils.AverageMeter()
     num_iter_per_epoch = len(validation_generator)
 
     y_true = []
@@ -124,7 +124,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
         f1 = validation_metrics['f1']
 
         losses.update(loss.data, features.size(0))
-        accuraries.update(validation_metrics["accuracy"], features.size(0))
+        accuracies.update(validation_metrics["accuracy"], features.size(0))
 
         writer.add_scalar('Test/Loss',
                           loss.item(),
@@ -144,7 +144,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 iter + 1,
                 num_iter_per_epoch,
                 losses.avg,
-                accuraries.avg
+                accuracies.avg
             ))
 
     writer.add_scalar('Val/loss/epoch', losses.avg, epoch + iter)
@@ -156,10 +156,10 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
     with open(log_file, 'a') as f:
         f.write(f'Validation on Epoch {epoch}')
         f.write(f'Average loss {losses.avg.item()}')
-        f.write(f'Average accuracy {accuraries.avg.item()}')
+        f.write(f'Average accuracy {accuracies.avg.item()}')
         f.write(report)
 
-    return losses.avg.item(), accuraries.avg.item()
+    return losses.avg.item(), accuracies.avg.item()
 
 
 def run(args, both_cases=False):
