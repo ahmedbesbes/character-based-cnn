@@ -233,7 +233,7 @@ if __name__ == "__main__":
     parser.add_argument('--validation_split', type=float, default=0.2)
     parser.add_argument('--label_column', type=str, default='Sentiment')
     parser.add_argument('--text_column', type=str, default='SentimentText')
-    parser.add_argument('--max_rows', type=int, default=100000)
+    parser.add_argument('--max_rows', type=int, default=None)
     parser.add_argument('--chunksize', type=int, default=50000)
     parser.add_argument('--encoding', type=str, default='utf-8')
     parser.add_argument('--steps', nargs='+', default=['lower'])
