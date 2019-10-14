@@ -197,6 +197,8 @@ def run(args, both_cases=False):
         weights = []
         for k in sorted(class_counts.keys()):
             weights.append(class_counts[k])
+        
+        weights = torch.Tensor(weights)
         if torch.cuda.is_available():
             weights = weights.cuda()
             criterion = nn.CrossEntropyLoss(weight=weights)
