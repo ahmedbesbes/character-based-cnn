@@ -153,7 +153,7 @@ def run(args, both_cases=False):
                          "num_workers": args.workers}
 
     full_dataset = MyDataset(args)
-    number_of_classes = full_dataset.number_of_characters
+    number_of_classes = full_dataset.get_number_of_classes()
 
     train_size = int((1 - args.validation_split) * len(full_dataset))
     validation_size = len(full_dataset) - train_size

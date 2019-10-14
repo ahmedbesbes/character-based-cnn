@@ -5,6 +5,7 @@ import pandas as pd
 from tqdm import tqdm
 from . import utils
 
+
 class MyDataset(Dataset):
     def __init__(self, args):
 
@@ -18,7 +19,6 @@ class MyDataset(Dataset):
         self.number_of_characters = args.number_of_characters + \
             len(args.extra_characters)
         self.max_length = args.max_length
-        self.num_classes = args.number_of_classes
 
         self.preprocessing_steps = args.steps
 
@@ -35,19 +35,24 @@ class MyDataset(Dataset):
             aux_df = df_chunk.copy()
             aux_df = aux_df[~aux_df[args.text_column].isnull()]
             aux_df['processed_text'] = (aux_df[args.text_column]
-                                          .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
+                                        .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
             texts += aux_df['processed_text'].tolist()
             labels += aux_df[args.label_column].tolist()
 
         if args.group_labels == 'binarize':
-            labels = list(map(lambda l: {0: 0, 1: 0, 2: 0, 3: 1, 4: 1}[l], labels))
-
-        print('data loaded successfully with {0} rows'.format(len(texts)))
+            labels = list(
+                map(lambda l: {0: 0, 1: 0, 2: 0, 3: 1, 4: 1}[l], labels))
 
         self.texts = texts
         self.labels = [label - 1 for label in labels]
         self.length = len(self.labels)
         self.number_of_classes = len(set(self.labels))
+
+        print(
+            f'data loaded successfully with {len(texts)} rows and {self.number_of_classes} labels')
+
+    def get_number_of_classes(self):
+        return self.number_of_classes
 
     def __len__(self):
         return self.length
