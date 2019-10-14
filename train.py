@@ -34,15 +34,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
 
         optimizer.zero_grad()
         predictions = model(features)
-
-        print('feature shape', features.shape)
-        print('prediction shape', predictions.shape)
-
-        print("predictions", predictions)
-        print("labels", labels)
-
         loss = criterion(predictions, labels)
-        print('loss value', loss)
 
         loss.backward()
         optimizer.step()
