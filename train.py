@@ -88,10 +88,12 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
     print(report)
 
     with open(log_file, 'a') as f:
-        f.write(f'Training on Epoch {epoch}')
-        f.write(f'Average loss {losses.avg.item()}')
-        f.write(f'Average accuracy {accuracies.avg.item()}')
+        f.write(f'Training on Epoch {epoch} \n')
+        f.write(f'Average loss {losses.avg.item()} \n')
+        f.write(f'Average accuracy {accuracies.avg.item()} \n')
         f.write(report)
+        f.write('*' * 50)
+        f.write('\n')
 
     return losses.avg.item(), accuracies.avg.item()
 
@@ -147,18 +149,20 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 accuracies.avg
             ))
 
-    writer.add_scalar('Val/loss/epoch', losses.avg, epoch + iter)
-    writer.add_scalar('Val/acc/epoch', accuracies.avg, epoch + iter)
+    writer.add_scalar('Test/loss/epoch', losses.avg, epoch + iter)
+    writer.add_scalar('Test/acc/epoch', accuracies.avg, epoch + iter)
 
     report = classification_report(y_true, y_pred)
     print(report)
 
     with open(log_file, 'a') as f:
-        f.write(f'Validation on Epoch {epoch}')
-        f.write(f'Average loss {losses.avg.item()}')
-        f.write(f'Average accuracy {accuracies.avg.item()}')
+        f.write(f'Validation on Epoch {epoch} \n')
+        f.write(f'Average loss {losses.avg.item()} \n')
+        f.write(f'Average accuracy {accuracies.avg.item()} \n')
         f.write(report)
-
+        f.write('=' * 50)
+        f.write('\n')
+        
     return losses.avg.item(), accuracies.avg.item()
 
 
