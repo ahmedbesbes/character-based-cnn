@@ -3,6 +3,7 @@ import shutil
 import json
 import argparse
 import time
+from datetime import datetime
 
 from tqdm import tqdm
 import numpy as np
@@ -18,6 +19,7 @@ from src.cnn_model import CharacterLevelCNN
 from src.data_loader import MyDataset
 from src import utils
 from src.model import CharacterLevelCNN
+
 
 def train(model, training_generator, optimizer, criterion, epoch, writer, print_every=25):
     model.train()
@@ -89,6 +91,9 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
     accuraries = utils.AverageMeter()
     num_iter_per_epoch = len(validation_generator)
 
+    y_true = []
+    y_pred = []
+
     for iter, batch in tqdm(enumerate(validation_generator), total=num_iter_per_epoch):
         features, labels = batch
         if torch.cuda.is_available():
@@ -97,6 +102,10 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
         with torch.no_grad():
             predictions = model(features)
         loss = criterion(predictions, labels)
+
+        y_true += labels.cpu().numpy().tolist()
+        y_pred += torch.max(predictions, 1)[1].cpu().numpy().tolist()
+
         validation_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                   predictions.cpu().detach().numpy(),
                                                   list_metrics=["accuracy", "f1"])
@@ -127,20 +136,24 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                 accuraries.avg
             ))
 
+    report = classification_report(y_true, y_pred)
+    print(report)
+
     return losses.avg.item(), accuraries.avg.item()
 
 
 def run(args, both_cases=False):
 
-    log_path = args.log_path
-    if os.path.isdir(log_path):
-        shutil.rmtree(log_path)
-    os.makedirs(log_path)
+    if args.flush_history == 1:
+        objects = os.listdir(args.log_path)
+        for f in objects:
+            if os.path.isdir(args.log_path + f):
+                shutil.rmtree(args.log_path + f)
 
-    if not os.path.exists(args.output):
-        os.makedirs(args.output)
-
-    writer = SummaryWriter(log_path)
+    now = datetime.now()
+    logdir = args.log_path + now.strftime("%Y%m%d-%H%M%S") + "/"
+    os.makedirs(logdir)
+    writer = SummaryWriter(logdir)
 
     batch_size = args.batch_size
 
@@ -239,7 +252,8 @@ if __name__ == "__main__":
     parser.add_argument('--chunksize', type=int, default=50000)
     parser.add_argument('--encoding', type=str, default='utf-8')
     parser.add_argument('--steps', nargs='+', default=['lower'])
-    parser.add_argument('--group_labels', type=str, default=None, choices=[None, 'binarize'])
+    parser.add_argument('--group_labels', type=str,
+                        default=None, choices=[None, 'binarize'])
 
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
