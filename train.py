@@ -81,8 +81,8 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 accuraries.avg
             ))
 
-    writer.add_scalar('Train/loss/epoch', losses.avg, epoch + i)
-    writer.add_scalar('Train/acc/epoch', accuracies.avg, epoch + i)
+    writer.add_scalar('Train/loss/epoch', losses.avg, epoch + iter)
+    writer.add_scalar('Train/acc/epoch', accuracies.avg, epoch + iter)
 
     report = classification_report(y_true, y_pred)
     print(report)
@@ -147,8 +147,8 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                 accuraries.avg
             ))
 
-    writer.add_scalar('Val/loss/epoch', losses.avg, epoch + i)
-    writer.add_scalar('Val/acc/epoch', accuracies.avg, epoch + i)
+    writer.add_scalar('Val/loss/epoch', losses.avg, epoch + iter)
+    writer.add_scalar('Val/acc/epoch', accuracies.avg, epoch + iter)
 
     report = classification_report(y_true, y_pred)
     print(report)
