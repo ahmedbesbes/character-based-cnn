@@ -41,7 +41,7 @@ class MyDataset(Dataset):
         print('data loaded successfully with {0} rows'.format(len(texts)))
 
         self.texts = texts
-        self.labels = labels
+        self.labels = [label - 1 for label in labels]
         self.length = len(self.labels)
 
     def __len__(self):
