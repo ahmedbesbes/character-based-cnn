@@ -115,7 +115,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, print_every=
                 accuraries.avg
             ))
 
-    return np.mean(losses), np.mean(accuraries)
+    return losses.avg, accuraries.avg
 
 
 def run(args, both_cases=False):
