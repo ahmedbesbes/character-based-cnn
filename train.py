@@ -10,13 +10,14 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from tensorboardX import SummaryWriter
 
 from sklearn.metrics import classification_report
+from sklearn.model_selection import train_test_split
 
 from src.cnn_model import CharacterLevelCNN
-from src.data_loader import MyDataset
+from src.data_loader import MyDataset, load_data
 from src import utils
 from src.model import CharacterLevelCNN
 
@@ -165,13 +166,19 @@ def run(args, both_cases=False):
                          "shuffle": False,
                          "num_workers": args.workers}
 
-    full_dataset = MyDataset(args)
-    number_of_classes = full_dataset.get_number_of_classes()
+    texts, labels, number_of_classes, sample_weights = load_data(args)
+    train_texts, val_texts, train_labels, val_labels, train_sample_weights, _ = train_test_split(texts,
+                                                                                                 labels,
+                                                                                                 sample_weights,
+                                                                                                 test_size=args.validation_split)
+    training_set = MyDataset(train_texts, train_labels, args)
+    validation_set = MyDataset(val_texts, val_labels, args)
 
-    train_size = int((1 - args.validation_split) * len(full_dataset))
-    validation_size = len(full_dataset) - train_size
-    training_set, validation_set = torch.utils.data.random_split(
-        full_dataset, [train_size, validation_size])
+    if bool(args.use_sampler):
+        sampler = WeightedRandomSampler(train_sample_weights.type(
+            'torch.DoubleTensor'), len(train_sample_weights))
+        training_params['sampler'] = sampler
+
     training_generator = DataLoader(training_set, **training_params)
     validation_generator = DataLoader(validation_set, **validation_params)
 
@@ -254,6 +261,7 @@ if __name__ == "__main__":
     parser.add_argument('--steps', nargs='+', default=['lower'])
     parser.add_argument('--group_labels', type=str,
                         default=None, choices=[None, 'binarize'])
+    parser.add_argument('--use_sampler', type=int, default=0, choices=[0, 1])
 
     parser.add_argument('--alphabet', type=str,
                         default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")

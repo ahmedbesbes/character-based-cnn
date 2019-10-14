@@ -1,62 +1,67 @@
 import json
 import numpy as np
+from collections import Counter
+
 from torch.utils.data import Dataset
 import pandas as pd
 from tqdm import tqdm
 from . import utils
 
+import torch
+
+def get_sample_weights(labels):
+    counter = Counter(labels)
+    counter = dict(counter)
+    for k in counter:
+        counter[k] = 1 / counter[k]
+    sample_weights = np.array([counter[l] for l in labels])
+    sample_weights = torch.from_numpy(sample_weights)
+    return sample_weights
+
+
+def load_data(args):
+    # chunk your dataframes in small portions
+    chunks = pd.read_csv(args.data_path,
+                         usecols=[args.text_column, args.label_column],
+                         chunksize=args.chunksize,
+                         encoding=args.encoding,
+                         nrows=args.max_rows)
+    for df_chunk in tqdm(chunks):
+        aux_df = df_chunk.copy()
+        aux_df = aux_df[~aux_df[args.text_column].isnull()]
+        aux_df['processed_text'] = (aux_df[args.text_column]
+                                    .map(lambda text: utils.process_text(args.preprocessing_steps, text)))
+        texts += aux_df['processed_text'].tolist()
+        labels += aux_df[args.label_column].tolist()
+
+    if args.group_labels == 'binarize':
+        labels = list(
+            map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
+
+    number_of_classes = len(set(labels))
+    
+    if number_of_classes > 2:
+        labels = [label - 1 for label in labels]
+
+    print(
+        f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
+
+    sample_weights = get_sample_weights(labels)
+    return texts, labels, number_of_classes, sample_weights
+
 
 class MyDataset(Dataset):
-    def __init__(self, args):
-
-        self.data_path = args.data_path
-
-        self.max_rows = args.max_rows
-        self.chunksize = args.chunksize
-        self.encoding = args.encoding
+    def __init__(self, texts, labels, args):
+        self.texts = texts
+        self.labels = labels
+        self.length = len(self.texts)
 
         self.vocabulary = list(args.alphabet) + list(args.extra_characters)
         self.number_of_characters = args.number_of_characters + \
             len(args.extra_characters)
         self.max_length = args.max_length
-
         self.preprocessing_steps = args.steps
-
         self.identity_mat = np.identity(self.number_of_characters)
-        texts, labels = [], []
-
-        # chunk your dataframes in small portions
-        chunks = pd.read_csv(self.data_path,
-                             usecols=[args.text_column, args.label_column],
-                             chunksize=self.chunksize,
-                             encoding=self.encoding,
-                             nrows=self.max_rows)
-        for df_chunk in tqdm(chunks):
-            aux_df = df_chunk.copy()
-            aux_df = aux_df[~aux_df[args.text_column].isnull()]
-            aux_df['processed_text'] = (aux_df[args.text_column]
-                                        .map(lambda text: utils.process_text(self.preprocessing_steps, text)))
-            texts += aux_df['processed_text'].tolist()
-            labels += aux_df[args.label_column].tolist()
-
-        if args.group_labels == 'binarize':
-            labels = list(
-                map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
-
-        self.texts = texts
-        self.number_of_classes = len(set(labels))
-        self.length = len(labels)
-
-        if self.number_of_classes > 2:
-            self.labels = [label - 1 for label in labels]
-        else:
-            self.labels = labels
-
-        print(
-            f'data loaded successfully with {len(texts)} rows and {self.number_of_classes} labels')
-
-    def get_number_of_classes(self):
-        return self.number_of_classes
 
     def __len__(self):
         return self.length
