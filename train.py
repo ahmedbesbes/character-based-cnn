@@ -95,7 +95,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
         f.write(f'Average loss {losses.avg.item()} \n')
         f.write(f'Average accuracy {accuracies.avg.item()} \n')
         f.write(report)
-        f.write('*' * 50)
+        f.write('*' * 25)
         f.write('\n')
 
     return losses.avg.item(), accuracies.avg.item(), f1_train
@@ -278,11 +278,11 @@ def run(args, both_cases=False):
 
         # model checkpoint
 
-        if validation_f1 < best_f1:
+        if validation_f1 > best_f1:
             best_f1 = validation_f1
             best_epoch = epoch
             if args.checkpoint == 1:
-                torch.save(model, args.output + 'model_epoch_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
+                torch.save(model, args.output + 'model_epoch_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
                                                                                                  optimizer.state_dict()['param_groups'][0]['lr'],
                                                                                                  round(validation_loss, 4),
                                                                                                  round(validation_accuracy, 4),
