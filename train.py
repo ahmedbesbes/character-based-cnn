@@ -259,11 +259,11 @@ def run(args, both_cases=False):
                                                                                                     round(
                                                                                                         validation_accuracy, 4)
                                                                                                     ))
-
-        if epoch - best_epoch > args.patience > 0:
-            print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
-                epoch, validation_loss, best_epoch))
-            break
+        if bool(args.early_stopping):
+            if epoch - best_epoch > args.patience > 0:
+                print("Stop training at epoch {}. The lowest loss achieved is {} at epoch {}".format(
+                    epoch, validation_loss, best_epoch))
+                break
 
 
 if __name__ == "__main__":
@@ -299,6 +299,7 @@ if __name__ == "__main__":
     parser.add_argument('--class_weights', type=int, default=0, choices=[0, 1])
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
+    parser.add_argument('--early_stopping', type=int, default=0, choices=[0, 1])
     parser.add_argument('--checkpoint', type=int, choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='./logs/')
