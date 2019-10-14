@@ -41,7 +41,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
         predictions = model(features)
 
         y_true += labels.cpu().numpy().tolist()
-        y_pred += torch.max(predictions, 1).cpu().numpy().tolist()
+        y_pred += torch.max(predictions, 1)[1].cpu().numpy().tolist()
 
         loss = criterion(predictions, labels)
 
@@ -79,7 +79,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, print_
 
     report = classification_report(y_true, y_true)
     print(report)
-    
+
     return losses.avg, accuraries.avg
 
 
