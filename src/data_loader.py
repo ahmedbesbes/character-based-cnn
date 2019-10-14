@@ -41,7 +41,7 @@ class MyDataset(Dataset):
 
         if args.group_labels == 'binarize':
             labels = list(
-                map(lambda l: {0: 0, 1: 0, 2: 0, 3: 1, 4: 1}[l], labels))
+                map(lambda l: {1: 0, 2: 0, 3: 0, 4: 1, 5: 1}[l], labels))
 
         self.texts = texts
         self.labels = [label - 1 for label in labels]
