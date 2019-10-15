@@ -74,28 +74,18 @@ class MyDataset(Dataset):
     def __getitem__(self, index):
         raw_text = self.texts[index]
         
-        data = torch.zeros((self.number_of_characters, self.max_length))
-        for i, char in enumerate(raw_text[::-1]):
-            if char in self.vocabulary:
-                print('i = ', i)
-                print('index char ', self.vocabulary.index(char))
+        data = np.array([self.identity_mat[self.vocabulary.index(i)] for i in list(raw_text)[::-1] if i in self.vocabulary],
+                        dtype=np.float32)
+        if len(data) > self.max_length:
+            data = data[:self.max_length]
+        elif 0 < len(data) < self.max_length:
+            data = np.concatenate(
+                (data, np.zeros((self.max_length - len(data), self.number_of_characters), dtype=np.float32)))
+        elif len(data) == 0:
+            data = np.zeros(
+                (self.max_length, self.number_of_characters), dtype=np.float32)
 
-                data[self.vocabulary.index(char)][i] = 1
-
-
-        # data = np.array([self.identity_mat[self.vocabulary.index(i)] for i in list(raw_text) if i in self.vocabulary],
-        #                 dtype=np.float32)
-        # if len(data) > self.max_length:
-        #     data = data[:self.max_length]
-        # elif 0 < len(data) < self.max_length:
-        #     data = np.concatenate(
-        #         (data, np.zeros((self.max_length - len(data), self.number_of_characters), dtype=np.float32)))
-        # elif len(data) == 0:
-        #     data = np.zeros(
-        #         (self.max_length, self.number_of_characters), dtype=np.float32)
-
-        # data = np.flip(data, axis=1)
         label = self.labels[index]
-
-        #data = torch.Tensor(data)
+        data = torch.Tensor(data)
+        
         return data, label
