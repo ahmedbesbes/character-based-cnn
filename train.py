@@ -240,8 +240,12 @@ def run(args, both_cases=False):
             criterion = nn.CrossEntropyLoss()
 
     else:
-        criterion = FocalLoss(gamma=args.gamma,
-                              alpha=[args.alpha] * number_of_classes)
+        if args.alpha is None:
+            criterion = FocalLoss(gamma=args.gamma, alpha=None)
+        else:
+            criterion = FocalLoss(gamma=args.gamma, 
+                                  alpha=[args.alpha] * number_of_classes)
+
 
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(
@@ -342,7 +346,7 @@ if __name__ == "__main__":
                         default=0, choices=[0, 1])
     parser.add_argument('--focal_loss', type=int, default=0, choices=[0, 1])
     parser.add_argument('--gamma', type=float, default=2)
-    parser.add_argument('--alpha', type=float, default=0.25)
+    parser.add_argument('--alpha', type=float, default=None)
 
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
