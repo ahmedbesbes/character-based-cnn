@@ -48,11 +48,28 @@ def load_data(args):
     if number_of_classes > 2:
         labels = [label - 1 for label in labels]
 
-    print(
-        f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
+    texts_ = []
+    labels_ = []
+    count_minority = labels.count(0)
 
-    sample_weights = get_sample_weights(labels)
-    return texts, labels, number_of_classes, sample_weights
+    c = 0
+    for label, text in zip(labels, texts):
+        if label == 0:
+            texts_.append(text)
+            labels_.append(label)
+        else:
+            c += 1
+            if c < count_minority:
+                texts_.append(text)
+                labels_.append(label)
+            else:
+                break
+
+    print(
+        f'data loaded successfully with {len(texts_)} rows and {number_of_classes} labels')
+
+    sample_weights = get_sample_weights(labels_)
+    return texts_, labels_, number_of_classes, sample_weights
 
 
 class MyDataset(Dataset):
@@ -87,5 +104,5 @@ class MyDataset(Dataset):
 
         label = self.labels[index]
         data = torch.Tensor(data)
-        
+
         return data, label
