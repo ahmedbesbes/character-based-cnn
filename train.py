@@ -262,14 +262,16 @@ def run(args, both_cases=False):
                                                            criterion,
                                                            epoch,
                                                            writer,
-                                                           log_file)
+                                                           log_file,
+                                                           args.log_every)
 
         validation_loss, validation_accuracy, validation_f1 = evaluate(model,
                                                                        validation_generator,
                                                                        criterion,
                                                                        epoch,
                                                                        writer,
-                                                                       log_file)
+                                                                       log_file,
+                                                                       args.log_every)
 
         print('[Epoch: {} / {}]\ttrain_loss: {:.4f} \ttrain_acc: {:.4f} \tval_loss: {:.4f} \tval_acc: {:.4f}'.
               format(epoch + 1, args.epochs, training_loss, training_accuracy, validation_loss, validation_accuracy))
@@ -350,6 +352,7 @@ if __name__ == "__main__":
                         choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
     parser.add_argument('--log_path', type=str, default='./logs/')
+    parser.add_argument('--log_every', type=int, default=100)
     parser.add_argument('--flush_history', type=int,
                         default=1, choices=[0, 1])
     parser.add_argument('--output', type=str, default='./models/')
