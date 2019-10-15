@@ -81,7 +81,7 @@ class CharacterLevelCNN(nn.Module):
     # forward
 
     def forward(self, x):
-        #x = x.transpose(1, 2)
+        x = x.transpose(1, 2)
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
