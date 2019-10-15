@@ -55,7 +55,7 @@ def load_data(args):
     # labels_ = [label for (text, label) in zip(texts, labels) if label == 0] + [label for (text, label) in zip(texts, labels) if label == 1][:count_minority] 
 
     print(
-        f'data loaded successfully with {len(texts_)} rows and {number_of_classes} labels')
+        f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
 
     sample_weights = get_sample_weights(labels)
     return texts, labels, number_of_classes, sample_weights
