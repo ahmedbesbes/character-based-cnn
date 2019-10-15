@@ -48,22 +48,10 @@ def load_data(args):
     if number_of_classes > 2:
         labels = [label - 1 for label in labels]
 
-    texts_ = []
-    labels_ = []
-    count_minority = labels.count(0)
 
-    c = 0
-    for label, text in zip(labels, texts):
-        if label == 0:
-            texts_.append(text)
-            labels_.append(label)
-        else:
-            c += 1
-            if c < count_minority:
-                texts_.append(text)
-                labels_.append(label)
-            else:
-                break
+    count_minority = labels.count(0)
+    texts_ = [text for (text, label) in zip(texts, labels) if label == 0] + [text for (text, label) in zip(texts, labels) if label == 1][:count_minority]
+    labels_ = [label for (text, label) in zip(texts, labels) if label == 0] + [label for (text, label) in zip(texts, labels) if label == 1][:count_minority] 
 
     print(
         f'data loaded successfully with {len(texts_)} rows and {number_of_classes} labels')
