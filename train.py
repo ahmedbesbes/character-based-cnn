@@ -21,6 +21,7 @@ from src.cnn_model import CharacterLevelCNN
 from src.data_loader import MyDataset, load_data
 from src import utils
 from src.model import CharacterLevelCNN
+from src.focal_loss import FocalLoss
 
 
 def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, print_every=25):
@@ -220,21 +221,26 @@ def run(args, both_cases=False):
     if torch.cuda.is_available():
         model.cuda()
 
-    if bool(args.class_weights):
-        class_counts = dict(Counter(train_labels))
-        m = max(class_counts.values())
-        for c in class_counts:
-            class_counts[c] = m / class_counts[c]
-        weights = []
-        for k in sorted(class_counts.keys()):
-            weights.append(class_counts[k])
+    if not bool(args.focal_loss):
+        if bool(args.class_weights):
+            class_counts = dict(Counter(train_labels))
+            m = max(class_counts.values())
+            for c in class_counts:
+                class_counts[c] = m / class_counts[c]
+            weights = []
+            for k in sorted(class_counts.keys()):
+                weights.append(class_counts[k])
 
-        weights = torch.Tensor(weights)
-        if torch.cuda.is_available():
-            weights = weights.cuda()
-            criterion = nn.CrossEntropyLoss(weight=weights)
+            weights = torch.Tensor(weights)
+            if torch.cuda.is_available():
+                weights = weights.cuda()
+                criterion = nn.CrossEntropyLoss(weight=weights)
+        else:
+            criterion = nn.CrossEntropyLoss()
+
     else:
-        criterion = nn.CrossEntropyLoss()
+        criterion = FocalLoss(gamma=args.gamma,
+                              alpha=[args.alpha] * number_of_classes)
 
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(
@@ -331,6 +337,10 @@ if __name__ == "__main__":
     parser.add_argument('--learning_rate', type=float, default=0.01)
     parser.add_argument('--class_weights', type=int,
                         default=0, choices=[0, 1])
+    parser.add_argument('--focal_loss', type=int, default=0, choices=[0, 1])
+    parser.add_argument('--gamma', type=float, default=2)
+    parser.add_argument('--alpha', type=float, default=0.25)
+
     parser.add_argument('--schedule', type=int, default=3)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--early_stopping', type=int,
