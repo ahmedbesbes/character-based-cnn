@@ -25,7 +25,8 @@ def load_data(args):
                          usecols=[args.text_column, args.label_column],
                          chunksize=args.chunksize,
                          encoding=args.encoding,
-                         nrows=args.max_rows)
+                         nrows=args.max_rows,
+                         sep=args.sep)
     texts = []
     labels = []
     for df_chunk in tqdm(chunks):
