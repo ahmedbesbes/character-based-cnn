@@ -285,11 +285,15 @@ def run(args, both_cases=False):
             best_epoch = epoch
             if args.checkpoint == 1:
                 torch.save(model, args.output + 'model_epoch_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
-                                                                                                 optimizer.state_dict()['param_groups'][0]['lr'],
-                                                                                                 round(validation_loss, 4),
-                                                                                                 round(validation_accuracy, 4),
-                                                                                                 round(validation_f1, 4)
-                                                                                                 ))
+                                                                                                       optimizer.state_dict()[
+                                                                                                           'param_groups'][0]['lr'],
+                                                                                                       round(
+                                                                                                           validation_loss, 4),
+                                                                                                       round(
+                                                                                                           validation_accuracy, 4),
+                                                                                                       round(
+                                                                                                           validation_f1, 4)
+                                                                                                       ))
 
         if bool(args.early_stopping):
             if epoch - best_epoch > args.patience > 0:
@@ -315,9 +319,12 @@ if __name__ == "__main__":
     parser.add_argument('--use_sampler', type=int,
                         default=0, choices=[0, 1])
 
+    # parser.add_argument('--alphabet', type=str,
+    #                     default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
+
     parser.add_argument('--alphabet', type=str,
-                        default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
-    parser.add_argument('--number_of_characters', type=int, default=68)
+                        default='abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:\'"\\/|_@#$%^&*~`+-=<>()[]{}\n')
+    parser.add_argument('--number_of_characters', type=int, default=70)
     parser.add_argument('--extra_characters', type=str, default='')
 
     parser.add_argument('--config_path', type=str, default='./config.json')
