@@ -61,7 +61,7 @@ class MyDataset(Dataset):
         self.labels = labels
         self.length = len(self.texts)
 
-        self.vocabulary = list(args.alphabet) + list(args.extra_characters)
+        self.vocabulary = args.alphabet + args.extra_characters
         self.number_of_characters = args.number_of_characters + \
             len(args.extra_characters)
         self.max_length = args.max_length
