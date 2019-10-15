@@ -234,6 +234,7 @@ def run(args, both_cases=False):
             weights = torch.Tensor(weights)
             if torch.cuda.is_available():
                 weights = weights.cuda()
+                print(f'passing weights to CrossEntropyLoss : {weights}')
                 criterion = nn.CrossEntropyLoss(weight=weights)
         else:
             criterion = nn.CrossEntropyLoss()
