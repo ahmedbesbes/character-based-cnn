@@ -87,5 +87,6 @@ class MyDataset(Dataset):
         data = np.flip(data, axis=1)
         label = self.labels[index]
 
+        print('shape', data.shape)
         data = torch.Tensor(data)
         return data, label
