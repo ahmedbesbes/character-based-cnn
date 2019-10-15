@@ -77,6 +77,9 @@ class MyDataset(Dataset):
         data = torch.zeros((self.number_of_characters, self.max_length))
         for i, char in enumerate(raw_text[::-1]):
             if char in self.vocabulary:
+                print('i = ', i)
+                print('index char ', self.vocabulary.index(char))
+
                 data[self.vocabulary.index(char)][i] = 1
 
 
