@@ -31,7 +31,7 @@ def load_data(args):
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
-        aux_df = aux_df[(aux_df[args.text_column].map(len) > 10) & (aux_df[args.text_column].map(len) < 500)]
+        aux_df = aux_df[(aux_df[args.text_column].map(len) > 5) & (aux_df[args.text_column].map(len) < 600)]
         aux_df = aux_df[aux_df[args.label_column] != 3]
 
         aux_df['processed_text'] = (aux_df[args.text_column]
@@ -49,15 +49,15 @@ def load_data(args):
         labels = [label - 1 for label in labels]
 
 
-    count_minority = labels.count(0)
-    texts_ = [text for (text, label) in zip(texts, labels) if label == 0] + [text for (text, label) in zip(texts, labels) if label == 1][:count_minority]
-    labels_ = [label for (text, label) in zip(texts, labels) if label == 0] + [label for (text, label) in zip(texts, labels) if label == 1][:count_minority] 
+    # count_minority = labels.count(0)
+    # texts_ = [text for (text, label) in zip(texts, labels) if label == 0] + [text for (text, label) in zip(texts, labels) if label == 1][:count_minority]
+    # labels_ = [label for (text, label) in zip(texts, labels) if label == 0] + [label for (text, label) in zip(texts, labels) if label == 1][:count_minority] 
 
     print(
         f'data loaded successfully with {len(texts_)} rows and {number_of_classes} labels')
 
-    sample_weights = get_sample_weights(labels_)
-    return texts_, labels_, number_of_classes, sample_weights
+    sample_weights = get_sample_weights(labels)
+    return texts, labels, number_of_classes, sample_weights
 
 
 class MyDataset(Dataset):
