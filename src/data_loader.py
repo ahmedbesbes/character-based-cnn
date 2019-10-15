@@ -84,7 +84,7 @@ class MyDataset(Dataset):
             data = np.zeros(
                 (self.max_length, self.number_of_characters), dtype=np.float32)
 
-        data = np.flip(data, axis=1)
+        #data = np.flip(data, axis=1)
         label = self.labels[index]
 
         data = torch.Tensor(data)
