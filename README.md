@@ -105,6 +105,8 @@ Launch train.py with the following arguments:
 - `chunksize`: size of the chunks when loading the data using pandas. default to 500000
 - `encoding`: default to utf-8
 - `steps`: text preprocessing steps to include on the text like hashtag or url removal
+- `group_labels`: whether or not to group labels. Default to None.
+- `use_sampler`: whether or not to use a weighted sampler to overcome class imbalance
 - `alphabet`: default to abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~\`+-=<>()[]{} (normally you should not modify it)
 - `number_of_characters`: default 70
 - `extra_characters`: additional characters that you'd add to the alphabet. For example uppercase letters or accented characters
@@ -113,6 +115,10 @@ Launch train.py with the following arguments:
 - `batch_size`: batch size, default to 128.
 - `optimizer`: adam or sgd, default to sgd
 - `learning_rate`: default to 0.01
+- `class_weights`: whether or not to use class weights in the cross entropy loss
+- `focal_loss`: whether or not to use the focal loss
+- `gamma`: gamma parameter of the focal loss. default to 2 
+- `alpha`: alpha parameter of the focal loss. default to 0.25
 - `schedule`: number of epochs by which the learning rate decreases by half (learning rate scheduling works only for sgd), default to 3. set it to 0 to disable it
 - `patience`: maximum number of epochs to wait without improvement of the validation loss, default to 3
 - `early_stopping`: to choose whether or not to early stop the training. default to 0. set to 1 to enable it.
