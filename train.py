@@ -319,18 +319,10 @@ if __name__ == "__main__":
     parser.add_argument('--use_sampler', type=int,
                         default=0, choices=[0, 1])
 
-    # parser.add_argument('--alphabet', type=str,
-    #                     default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
-
     parser.add_argument('--alphabet', type=str,
                         default='abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:\'"\\/|_@#$%^&*~`+-=<>()[]{}\n')
     parser.add_argument('--number_of_characters', type=int, default=70)
     parser.add_argument('--extra_characters', type=str, default='')
-
-    parser.add_argument('--config_path', type=str, default='./config.json')
-    parser.add_argument('--size', type=str,
-                        choices=['small', 'large'], default='small')
-
     parser.add_argument('--max_length', type=int, default=150)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--batch_size', type=int, default=128)
