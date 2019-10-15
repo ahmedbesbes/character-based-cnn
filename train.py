@@ -203,7 +203,8 @@ def run(args, both_cases=False):
                                                                                                  labels,
                                                                                                  sample_weights,
                                                                                                  test_size=args.validation_split,
-                                                                                                 random_state=42)
+                                                                                                 random_state=42,
+                                                                                                 stratify=labels)
     training_set = MyDataset(train_texts, train_labels, args)
     validation_set = MyDataset(val_texts, val_labels, args)
 
