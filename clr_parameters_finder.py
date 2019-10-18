@@ -99,7 +99,7 @@ def run(args):
                 losses.append(loss)
     
     plt.semilogx(learning_rates, losses)
-    plt.savefig('../plots/losses_vs_lr.png')
+    plt.savefig('./plots/losses_vs_lr.png')
 
 
 if __name__ == "__main__":
