@@ -40,8 +40,8 @@ def load_data(args):
         labels += aux_df[args.label_column].tolist()
 
     if args.group_labels == 'binarize':
-        texts = [text for text, label in zip(texts, labels) if label != 0]
-        labels = [label for text, label in zip(texts, labels) if label != 0]
+        texts = [text for text, label in zip(texts, labels) if label != 3]
+        labels = [label for text, label in zip(texts, labels) if label != 3]
 
         labels = list(
             map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
