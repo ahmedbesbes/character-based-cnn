@@ -32,29 +32,32 @@ def load_data(args):
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
-        aux_df = aux_df[(aux_df[args.text_column].map(len) > 5) & (aux_df[args.text_column].map(len) < 600)]
-
-        if args.group_labels == 'binarize':
-            aux_df = aux_df[aux_df[args.label_column] != 3]
-
+        aux_df = aux_df[(aux_df[args.text_column].map(len) > 5)
+                        & (aux_df[args.text_column].map(len) < 600)]
         aux_df['processed_text'] = (aux_df[args.text_column]
                                     .map(lambda text: utils.process_text(args.steps, text)))
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
     if args.group_labels == 'binarize':
+        texts = [text for text, label in zip(texts, labels) if label != 0]
+        labels = [label for text, label in zip(texts, labels) if label != 0]
+
         labels = list(
             map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
+
+        count_minority = labels.count(0)
+
+        balanced_texts = [text for text, label in zip(texts, labels) if label == 0] + [text for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+        balanced_labels = [label for text, label in zip(texts, labels) if label == 0] + [label for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+
+        texts = balanced_texts
+        labels = balanced_labels
 
     number_of_classes = len(set(labels))
 
     if number_of_classes > 2:
         labels = [label - 1 for label in labels]
-
-
-    # count_minority = labels.count(0)
-    # texts_ = [text for (text, label) in zip(texts, labels) if label == 0] + [text for (text, label) in zip(texts, labels) if label == 1][:count_minority]
-    # labels_ = [label for (text, label) in zip(texts, labels) if label == 0] + [label for (text, label) in zip(texts, labels) if label == 1][:count_minority] 
 
     print(
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
@@ -81,7 +84,7 @@ class MyDataset(Dataset):
 
     def __getitem__(self, index):
         raw_text = self.texts[index]
-        
+
         data = np.array([self.identity_mat[self.vocabulary.index(i)] for i in list(raw_text)[::-1] if i in self.vocabulary],
                         dtype=np.float32)
         if len(data) > self.max_length:
