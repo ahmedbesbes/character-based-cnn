@@ -39,12 +39,14 @@ def load_data(args):
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
-    print('len texts', len(texts))
-    print('len labels', len(labels))
+   
 
     if args.group_labels == 'binarize':
-        texts = [text for text, label in zip(texts, labels) if label != 3]
-        labels = [label for text, label in zip(texts, labels) if label != 3]
+        texts = [text for (text, label) in zip(texts, labels) if label != 3]
+        labels = [label for (text, label) in zip(texts, labels) if label != 3]
+
+        print('len texts', len(texts))
+        print('len labels', len(labels))
 
         labels = list(
             map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
