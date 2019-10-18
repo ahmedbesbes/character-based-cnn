@@ -22,7 +22,6 @@ from src import utils
 from src.model import CharacterLevelCNN
 from src.focal_loss import FocalLoss
 
-
 def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, print_every=25):
     model.train()
     losses = utils.AverageMeter()
@@ -249,9 +248,14 @@ def run(args, both_cases=False):
 
 
     if args.optimizer == 'sgd':
-        optimizer = torch.optim.SGD(
-            model.parameters(), lr=args.learning_rate, momentum=0.9
-        )
+        if args.scheduler == 'clr':
+            optimizer = torch.optim.SGD(
+                model.parameters(), lr=1, momentum=0.9
+            )
+        else:
+            optimizer = torch.optim.SGD(
+                model.parameters(), lr=args.learning_rate, momentum=0.9
+            )
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam(
             model.parameters(), lr=args.learning_rate
@@ -259,6 +263,10 @@ def run(args, both_cases=False):
 
     best_f1 = 0
     best_epoch = 0
+
+    if args.scheduler == 'clr':
+        stepsize = 4 * len(training_generator)
+        scheduler = utils.cyclical_lr(stepsize)
 
     for epoch in range(args.epochs):
         training_loss, training_accuracy, train_f1 = train(model,
@@ -284,13 +292,16 @@ def run(args, both_cases=False):
 
         # learning rate scheduling
 
-        if args.schedule != 0:
-            if args.optimizer == 'sgd' and (epoch + 1 % args.schedule == 0) and epoch > 0:
+        if args.scheduler == 'step':
+            if args.optimizer == 'sgd' and ((epoch + 1) % 3 == 0) and epoch > 0:
                 current_lr = optimizer.state_dict()['param_groups'][0]['lr']
                 current_lr /= 2
                 print('Decreasing learning rate to {0}'.format(current_lr))
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = current_lr
+        
+        elif args.scheduler == 'clr':
+            scheduler.step()
 
         # model checkpoint
 
@@ -351,7 +362,7 @@ if __name__ == "__main__":
     parser.add_argument('--gamma', type=float, default=2)
     parser.add_argument('--alpha', type=float, default=None)
 
-    parser.add_argument('--schedule', type=int, default=3)
+    parser.add_argument('--scheduler', type=str, default='step', choices=['clr', 'step'])
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--early_stopping', type=int,
                         default=0, choices=[0, 1])
