@@ -72,7 +72,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                           f1,
                           epoch * num_iter_per_epoch + iter)
 
-        if iter % print_every == 0:
+        if (iter % print_every == 0) and (iter > 0):
             print("[Training - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
                 iter + 1,
@@ -144,7 +144,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
                           f1,
                           epoch * num_iter_per_epoch + iter)
 
-        if iter % print_every == 0:
+        if (iter % print_every == 0) and (iter > 0):
             print("[Validation - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
                 iter + 1,
@@ -285,7 +285,7 @@ def run(args, both_cases=False):
         # learning rate scheduling
 
         if args.schedule != 0:
-            if args.optimizer == 'sgd' and epoch % args.schedule == 0 and epoch > 0:
+            if args.optimizer == 'sgd' and (epoch + 1 % args.schedule == 0) and epoch > 0:
                 current_lr = optimizer.state_dict()['param_groups'][0]['lr']
                 current_lr /= 2
                 print('Decreasing learning rate to {0}'.format(current_lr))
