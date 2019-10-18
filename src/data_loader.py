@@ -48,11 +48,15 @@ def load_data(args):
 
         count_minority = labels.count(0)
 
-        balanced_texts = [text for text, label in zip(texts, labels) if label == 0] + [text for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
-        balanced_labels = [label for text, label in zip(texts, labels) if label == 0] + [label for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+        if bool(args.balance):
 
-        texts = balanced_texts
-        labels = balanced_labels
+            balanced_texts = [text for text, label in zip(texts, labels) if label == 0] + \
+                            [text for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+            balanced_labels = [label for text, label in zip(texts, labels) if label == 0] + \ 
+                            [label for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+
+            texts = balanced_texts
+            labels = balanced_labels
 
     number_of_classes = len(set(labels))
 

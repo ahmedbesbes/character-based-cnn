@@ -349,6 +349,7 @@ if __name__ == "__main__":
     parser.add_argument('--group_labels', type=str,
                         default=None, choices=[None, 'binarize'])
     parser.add_argument('--ratio', type=float, default=1)
+    parser.add_argument('--balance', type=int, default=0, choices=[0, 1])
     parser.add_argument('--use_sampler', type=int,
                         default=0, choices=[0, 1])
 
