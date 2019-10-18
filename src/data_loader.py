@@ -37,7 +37,7 @@ def load_data(args):
         aux_df['processed_text'] = (aux_df[args.text_column]
                                     .map(lambda text: utils.process_text(args.steps, text)))
         texts += aux_df['processed_text'].tolist()
-        labels += aux_df['processed_text'].tolist()
+        labels += aux_df[args.label_column].tolist()
 
     if args.group_labels == 'binarize':
         texts = [text for text, label in zip(texts, labels) if label != 3]
