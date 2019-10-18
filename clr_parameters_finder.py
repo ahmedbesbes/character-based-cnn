@@ -151,8 +151,8 @@ if __name__ == "__main__":
     parser.add_argument('--model_name', type=str)
 
 
-    parser.add_argument('--lr_start', type=float, default=1e-5)
-    parser.add_argument('--lr_end', type=float, default=1e-2)
+    parser.add_argument('--start_lr', type=float, default=1e-5)
+    parser.add_argument('--end_lr', type=float, default=1e-2)
     parser.add_argument('--smoothing', type=float, default=0.1)
     parser.add_argument('--epochs', type=int, default=1)
 
