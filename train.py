@@ -271,7 +271,7 @@ def run(args, both_cases=False):
     best_epoch = 0
 
     if args.scheduler == 'clr':
-        stepsize = 4 * len(training_generator)
+        stepsize = int(args.stepsize * len(training_generator))
         clr = utils.cyclical_lr(stepsize)
         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, [clr])
 
@@ -369,6 +369,7 @@ if __name__ == "__main__":
     parser.add_argument('--alpha', type=float, default=None)
 
     parser.add_argument('--scheduler', type=str, default='step', choices=['clr', 'step'])
+    parser.add_argument('--stepsize', type=float, default=4)
     parser.add_argument('--patience', type=int, default=3)
     parser.add_argument('--early_stopping', type=int,
                         default=0, choices=[0, 1])
