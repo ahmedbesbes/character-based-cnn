@@ -67,6 +67,10 @@ def load_data(args):
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
 
     sample_weights = get_sample_weights(labels)
+
+    print('len texts', len(texts))
+    print('len labels', len(labels))
+
     return texts, labels, number_of_classes, sample_weights
 
 
