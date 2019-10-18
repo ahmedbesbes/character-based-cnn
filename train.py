@@ -74,9 +74,12 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                           f1,
                           epoch * num_iter_per_epoch + iter)
 
+        lr = optimizer.state_dict()["param_groups"][0]["lr"]
+
         if (iter % print_every == 0) and (iter > 0):
-            print("[Training - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
+            print("[Training - Epoch: {}], LR: {} , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
+                lr,
                 iter + 1,
                 num_iter_per_epoch,
                 losses.avg,
