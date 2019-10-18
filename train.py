@@ -22,7 +22,7 @@ from src import utils
 from src.model import CharacterLevelCNN
 from src.focal_loss import FocalLoss
 
-def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, print_every=25):
+def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, scheduler, args, print_every=25):
     model.train()
     losses = utils.AverageMeter()
     accuracies = utils.AverageMeter()
@@ -49,6 +49,9 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
         loss = criterion(predictions, labels)
 
         loss.backward()
+        if args.scheduler == 'clr':
+            scheduler.step()
+        
         optimizer.step()
         training_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                 predictions.cpu().detach().numpy(),
@@ -266,7 +269,8 @@ def run(args, both_cases=False):
 
     if args.scheduler == 'clr':
         stepsize = 4 * len(training_generator)
-        scheduler = utils.cyclical_lr(stepsize)
+        clr = utils.cyclical_lr(stepsize)
+        scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, [clr])
 
     for epoch in range(args.epochs):
         training_loss, training_accuracy, train_f1 = train(model,
@@ -276,6 +280,8 @@ def run(args, both_cases=False):
                                                            epoch,
                                                            writer,
                                                            log_file,
+                                                           scheduler,
+                                                           args,
                                                            args.log_every)
 
         validation_loss, validation_accuracy, validation_f1 = evaluate(model,
@@ -299,9 +305,6 @@ def run(args, both_cases=False):
                 print('Decreasing learning rate to {0}'.format(current_lr))
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = current_lr
-        
-        elif args.scheduler == 'clr':
-            scheduler.step()
 
         # model checkpoint
 
