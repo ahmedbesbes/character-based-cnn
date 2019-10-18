@@ -53,11 +53,11 @@ def run(args):
 
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(
-            model.parameters(), lr=args.learning_rate, momentum=0.9
+            model.parameters(), lr=args.start_lr, momentum=0.9
         )
     elif args.optimizer == 'adam':
         optimizer = torch.optim.Adam(
-            model.parameters(), lr=args.learning_rate
+            model.parameters(), lr=args.start_lr
         )
 
     start_lr = args.start_lr
