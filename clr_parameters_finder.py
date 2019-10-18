@@ -16,9 +16,9 @@ from torch.utils.data import DataLoader
 
 from sklearn.model_selection import train_test_split
 
-from data_loader import MyDataset, load_data
+from src.data_loader import MyDataset, load_data
 from src import utils
-from model import CharacterLevelCNN
+from src.model import CharacterLevelCNN
 
 from matplotlib import pyplot as plt
 
