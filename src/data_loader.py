@@ -39,6 +39,9 @@ def load_data(args):
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
+    print('len texts', len(texts))
+    print('len labels', len(labels))
+
     if args.group_labels == 'binarize':
         texts = [text for text, label in zip(texts, labels) if label != 3]
         labels = [label for text, label in zip(texts, labels) if label != 3]
@@ -68,8 +71,7 @@ def load_data(args):
 
     sample_weights = get_sample_weights(labels)
 
-    print('len texts', len(texts))
-    print('len labels', len(labels))
+
 
     return texts, labels, number_of_classes, sample_weights
 
