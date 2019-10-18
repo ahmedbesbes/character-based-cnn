@@ -50,10 +50,10 @@ def load_data(args):
 
         if bool(args.balance):
 
-            balanced_texts = [text for text, label in zip(texts, labels) if label == 0] + \
-                            [text for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
-            balanced_labels = [label for text, label in zip(texts, labels) if label == 0] + \ 
-                            [label for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)]
+            balanced_texts = ([text for text, label in zip(texts, labels) if label == 0] +
+                              [text for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)])
+            balanced_labels = ([label for text, label in zip(texts, labels) if label == 0] +
+                               [label for text, label in zip(texts, labels) if label == 1][:int(args.ratio * count_minority)])
 
             texts = balanced_texts
             labels = balanced_labels
