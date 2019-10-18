@@ -16,9 +16,9 @@ from torch.utils.data import DataLoader
 
 from sklearn.model_selection import train_test_split
 
-from src.data_loader import MyDataset, load_data
+from data_loader import MyDataset, load_data
 from src import utils
-from src.model import CharacterLevelCNN
+from model import CharacterLevelCNN
 
 from matplotlib import pyplot as plt
 
@@ -38,7 +38,6 @@ def run(args):
                                                              test_size=args.validation_split,
                                                              random_state=42,
                                                              stratify=labels)
-
 
     training_set = MyDataset(train_texts, train_labels, args)
     training_generator = DataLoader(training_set, **training_params)
