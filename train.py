@@ -256,7 +256,7 @@ def run(args, both_cases=False):
     if args.optimizer == 'sgd':
         if args.scheduler == 'clr':
             optimizer = torch.optim.SGD(
-                model.parameters(), lr=1, momentum=0.9
+                model.parameters(), lr=1, momentum=0.9, weight_decay=0.00001
             )
         else:
             optimizer = torch.optim.SGD(

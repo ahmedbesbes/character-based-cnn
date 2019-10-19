@@ -39,8 +39,6 @@ class CharacterLevelCNN(nn.Module):
                                    nn.MaxPool1d(3)
                                    )
 
-        self.dropout = nn.Dropout(0.5)
-
         # compute the  output shape after forwarding an input to the conv layers
 
         input_shape = (128,
@@ -50,8 +48,18 @@ class CharacterLevelCNN(nn.Module):
 
         # define linear layers
 
-        self.fc1 = nn.Linear(self.output_dimension, 1024)
-        self.fc2 = nn.Linear(1024, 1024)
+        self.fc1 = nn.Sequential(
+            nn.Linear(self.output_dimension, 1024),
+            nn.ReLU(),
+            nn.Dropout(0.5)
+        )
+
+        self.fc2 = nn.Sequential(
+            nn.Linear(1024, 1024),
+            nn.ReLU(),
+            nn.Dropout(0.5)
+        )
+
         self.fc3 = nn.Linear(1024, number_of_classes)
 
         # initialize weights
