@@ -38,11 +38,13 @@ def process_text(steps, text):
     if steps is not None:
         for step in steps:
             text = preprocessing_setps[step](text)
+    return text
+    # processed_text = ""
+    # for tx in text:
+    #     processed_text += tx + " "
+    # return processed_text
 
-    processed_text = ""
-    for tx in text:
-        processed_text += tx + " "
-    return processed_text
+
 
 # metrics // model evaluations
 

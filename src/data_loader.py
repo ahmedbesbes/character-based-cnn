@@ -39,11 +39,9 @@ def load_data(args):
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
-    print(f'5 first comments : {texts[:5]}')
-
     if args.group_labels == 'binarize':
-
-        clean_data = [(text, label) for (text, label) in zip(texts, labels) if label not in [3, 4]]
+        clean_data = [(text, label) for (text, label) in zip(
+            texts, labels) if label not in [3, 4]]
 
         texts = [text for (text, label) in clean_data]
         labels = [label for (text, label) in clean_data]
