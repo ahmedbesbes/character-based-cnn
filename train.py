@@ -357,8 +357,8 @@ if __name__ == "__main__":
                         default=0, choices=[0, 1])
 
     parser.add_argument('--alphabet', type=str,
-                        default='abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:\'"\\/|_@#$%^&*~`+-=<>()[]{}\n')
-    parser.add_argument('--number_of_characters', type=int, default=70)
+                        default="abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+ =<>()[]{}")
+    parser.add_argument('--number_of_characters', type=int, default=69)
     parser.add_argument('--extra_characters', type=str, default='')
     parser.add_argument('--max_length', type=int, default=150)
     parser.add_argument('--epochs', type=int, default=10)
