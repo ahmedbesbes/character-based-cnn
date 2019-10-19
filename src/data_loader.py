@@ -39,6 +39,8 @@ def load_data(args):
         texts += aux_df['processed_text'].tolist()
         labels += aux_df[args.label_column].tolist()
 
+    print(f'5 first comments : {texts[:5]}')
+
     if args.group_labels == 'binarize':
 
         clean_data = [(text, label) for (text, label) in zip(texts, labels) if label not in [3, 4]]
@@ -70,8 +72,6 @@ def load_data(args):
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
 
     sample_weights = get_sample_weights(labels)
-
-
 
     return texts, labels, number_of_classes, sample_weights
 
