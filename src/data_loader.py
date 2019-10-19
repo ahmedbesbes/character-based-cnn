@@ -41,13 +41,13 @@ def load_data(args):
 
     if args.group_labels == 'binarize':
 
-        clean_data = [(text, label) for (text, label) in zip(texts, labels) if label not in [2, 3, 4]]
+        clean_data = [(text, label) for (text, label) in zip(texts, labels) if label not in [3]]
 
         texts = [text for (text, label) in clean_data]
         labels = [label for (text, label) in clean_data]
 
         labels = list(
-            map(lambda l: {1: 0, 5: 1}[l], labels))
+            map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
 
         count_minority = labels.count(0)
 
