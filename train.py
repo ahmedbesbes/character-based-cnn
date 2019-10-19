@@ -274,6 +274,8 @@ def run(args, both_cases=False):
         stepsize = int(args.stepsize * len(training_generator))
         clr = utils.cyclical_lr(stepsize, args.min_lr, args.max_lr)
         scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, [clr])
+    else:
+        scheduler = None
 
     for epoch in range(args.epochs):
         training_loss, training_accuracy, train_f1 = train(model,
