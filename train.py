@@ -198,11 +198,13 @@ def run(args, both_cases=False):
 
     training_params = {"batch_size": batch_size,
                        "shuffle": True,
-                       "num_workers": args.workers}
+                       "num_workers": args.workers,
+                       "drop_last": True}
 
     validation_params = {"batch_size": batch_size,
                          "shuffle": False,
-                         "num_workers": args.workers}
+                         "num_workers": args.workers, 
+                         "drop_last": True}
 
     texts, labels, number_of_classes, sample_weights = load_data(args)
 
