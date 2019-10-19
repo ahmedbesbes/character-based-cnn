@@ -22,6 +22,7 @@ from src import utils
 from src.model import CharacterLevelCNN
 from src.focal_loss import FocalLoss
 
+
 def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, scheduler, args, print_every=25):
     model.train()
     losses = utils.AverageMeter()
@@ -51,7 +52,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
         loss.backward()
         if args.scheduler == 'clr':
             scheduler.step()
-        
+
         optimizer.step()
         training_metrics = utils.get_evaluation(labels.cpu().numpy(),
                                                 predictions.cpu().detach().numpy(),
@@ -249,9 +250,8 @@ def run(args, both_cases=False):
         if args.alpha is None:
             criterion = FocalLoss(gamma=args.gamma, alpha=None)
         else:
-            criterion = FocalLoss(gamma=args.gamma, 
+            criterion = FocalLoss(gamma=args.gamma,
                                   alpha=[args.alpha] * number_of_classes)
-
 
     if args.optimizer == 'sgd':
         if args.scheduler == 'clr':
@@ -317,16 +317,17 @@ def run(args, both_cases=False):
             best_f1 = validation_f1
             best_epoch = epoch
             if args.checkpoint == 1:
-                torch.save(model, args.output + 'model_epoch_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
-                                                                                                       optimizer.state_dict()[
-                                                                                                           'param_groups'][0]['lr'],
-                                                                                                       round(
-                                                                                                           validation_loss, 4),
-                                                                                                       round(
-                                                                                                           validation_accuracy, 4),
-                                                                                                       round(
-                                                                                                           validation_f1, 4)
-                                                                                                       ))
+                torch.save(model, args.output + 'model_epoch_{}_maxlen_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
+                                                                                                                 args.max_length,
+                                                                                                                 optimizer.state_dict()[
+                                                                                                                     'param_groups'][0]['lr'],
+                                                                                                                 round(
+                                                                                                                     validation_loss, 4),
+                                                                                                                 round(
+                                                                                                                     validation_accuracy, 4),
+                                                                                                                 round(
+                                                                                                                     validation_f1, 4)
+                                                                                                                 ))
 
         if bool(args.early_stopping):
             if epoch - best_epoch > args.patience > 0:
@@ -371,7 +372,8 @@ if __name__ == "__main__":
     parser.add_argument('--gamma', type=float, default=2)
     parser.add_argument('--alpha', type=float, default=None)
 
-    parser.add_argument('--scheduler', type=str, default='step', choices=['clr', 'step'])
+    parser.add_argument('--scheduler', type=str,
+                        default='step', choices=['clr', 'step'])
     parser.add_argument('--min_lr', type=float, default=1.7e-3)
     parser.add_argument('--max_lr', type=float, default=1e-2)
     parser.add_argument('--stepsize', type=float, default=4)
