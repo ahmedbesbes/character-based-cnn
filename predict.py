@@ -10,6 +10,7 @@ def predict(args):
     model = CharacterLevelCNN(args, args.number_of_classes)
     state = torch.load(args.model)
     model.load_state_dict(state)
+    model.eval()
     
     processed_input = utils.preprocess_input(args)
     processed_input = torch.tensor(processed_input)
