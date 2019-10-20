@@ -16,7 +16,7 @@ def predict(args):
         model = model.to('cuda')
     prediction = model(processed_input)
     probabilities = F.softmax(prediction, dim=1)
-    probabilities = probabilities.cpu().numpy()
+    probabilities = probabilities.detach().numpy()
     return probabilities
 
 
