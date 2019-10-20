@@ -39,12 +39,6 @@ def process_text(steps, text):
         for step in steps:
             text = preprocessing_setps[step](text)
     return text
-    # processed_text = ""
-    # for tx in text:
-    #     processed_text += tx + " "
-    # return processed_text
-
-
 
 # metrics // model evaluations
 
@@ -110,7 +104,7 @@ def preprocess_input(args):
     max_length = args.max_length
 
     processed_output = np.array([identity_mat[vocabulary.index(i)] for i in list(
-        raw_text) if i in vocabulary], dtype=np.float32)
+        raw_text[::-1]) if i in vocabulary], dtype=np.float32)
     if len(processed_output) > max_length:
         processed_output = processed_output[:max_length]
     elif 0 < len(processed_output) < max_length:
@@ -127,10 +121,11 @@ def preprocess_input(args):
 def cyclical_lr(stepsize, min_lr=1.7e-3, max_lr=1e-2):
 
     # Scaler: we can adapt this if we do not want the triangular CLR
-    scaler = lambda x: 1.
+    def scaler(x): return 1.
 
     # Lambda function to calculate the LR
-    lr_lambda = lambda it: min_lr + (max_lr - min_lr) * relative(it, stepsize)
+    def lr_lambda(it): return min_lr + (max_lr -
+                                        min_lr) * relative(it, stepsize)
 
     # Additional function to see where on the cycle we are
     def relative(it, stepsize):

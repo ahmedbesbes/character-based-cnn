@@ -40,6 +40,16 @@ def load_data(args):
         labels += aux_df[args.label_column].tolist()
 
     if args.group_labels == 'binarize':
+        '''
+        This part is adapted to the data I was dealing with
+        where I basically convert 5-star ratings to binary 
+        by discarding the number 3 and 4 and keeping 1, 2 and 5
+
+        1, 2 become the negative label
+        5 becomes the positive one
+
+        '''
+
         clean_data = [(text, label) for (text, label) in zip(
             texts, labels) if label not in [3, 4]]
 

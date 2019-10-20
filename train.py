@@ -81,7 +81,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
             print("[Training - Epoch: {}], LR: {} , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
                 lr,
-                iter + 1,
+                iter,
                 num_iter_per_epoch,
                 losses.avg,
                 accuracies.avg
@@ -153,7 +153,7 @@ def evaluate(model, validation_generator, criterion, epoch, writer, log_file, pr
         if (iter % print_every == 0) and (iter > 0):
             print("[Validation - Epoch: {}] , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
-                iter + 1,
+                iter,
                 num_iter_per_epoch,
                 losses.avg,
                 accuracies.avg

@@ -1,3 +1,27 @@
+'''
+This script allows to find the optimal parameters for a learning rate scheduling:
+
+- min_lr 
+- max_lr 
+
+We vary the learning rate inside one or several epochs between start_lr and end_lr 
+(given as arguments) and for each mini-batch, we note the value of the learning 
+rate and the loss.
+
+Then we plot the loss versus the learning rate and save it to plots/
+
+There's in general a downward trend first, a minimum and upward trend.
+
+One heuristic to find the optimal parameters:
+
+- max_lr = argmin_lr(loss) / 10
+- mix_lr = max_lr / 10
+
+
+reference: https://towardsdatascience.com/adaptive-and-cyclical-learning-rates-using-pytorch-2bf904d18dee
+
+'''
+
 import math
 import os
 import shutil
@@ -50,7 +74,6 @@ def run(args):
 
     criterion = nn.CrossEntropyLoss()
 
-
     if args.optimizer == 'sgd':
         optimizer = torch.optim.SGD(
             model.parameters(), lr=args.start_lr, momentum=0.9
@@ -65,7 +88,8 @@ def run(args):
     lr_find_epochs = args.epochs
     smoothing = args.smoothing
 
-    lr_lambda = lambda x: math.exp(x * math.log(end_lr / start_lr) / (lr_find_epochs * len(training_generator)))
+    def lr_lambda(x): return math.exp(
+        x * math.log(end_lr / start_lr) / (lr_find_epochs * len(training_generator)))
     scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
 
     losses = []
@@ -73,7 +97,8 @@ def run(args):
 
     for epoch in range(lr_find_epochs):
         print(f'[epoch {epoch + 1} / {lr_find_epochs}]')
-        progress_bar = tqdm(enumerate(training_generator), total=len(training_generator))
+        progress_bar = tqdm(enumerate(training_generator),
+                            total=len(training_generator))
         for iter, batch in progress_bar:
             features, labels = batch
             if torch.cuda.is_available():
@@ -81,7 +106,7 @@ def run(args):
                 labels = labels.cuda()
 
             optimizer.zero_grad()
-            
+
             predictions = model(features)
             loss = criterion(predictions, labels)
 
@@ -92,12 +117,12 @@ def run(args):
             lr = optimizer.state_dict()["param_groups"][0]["lr"]
             learning_rates.append(lr)
 
-            if iter==0:
+            if iter == 0:
                 losses.append(loss.item())
             else:
-                loss = smoothing  * loss.item() + (1 - smoothing) * losses[-1]
+                loss = smoothing * loss.item() + (1 - smoothing) * losses[-1]
                 losses.append(loss)
-    
+
     plt.semilogx(learning_rates, losses)
     plt.savefig('./plots/losses_vs_lr.png')
 
@@ -118,44 +143,22 @@ if __name__ == "__main__":
     parser.add_argument('--group_labels', type=str,
                         default=None, choices=[None, 'binarize'])
     parser.add_argument('--ratio', type=float, default=1)
-    parser.add_argument('--use_sampler', type=int,
-                        default=0, choices=[0, 1])
 
     parser.add_argument('--alphabet', type=str,
-                        default='abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:\'"\\/|_@#$%^&*~`+-=<>()[]{}\n')
-    parser.add_argument('--number_of_characters', type=int, default=70)
+                        default='abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:\'"\\/|_@#$%^&*~`+-=<>()[]{}')
+    parser.add_argument('--number_of_characters', type=int, default=69)
     parser.add_argument('--extra_characters', type=str, default='')
     parser.add_argument('--max_length', type=int, default=150)
     parser.add_argument('--batch_size', type=int, default=128)
     parser.add_argument('--optimizer', type=str,
                         choices=['adam', 'sgd'], default='sgd')
     parser.add_argument('--learning_rate', type=float, default=0.01)
-    parser.add_argument('--class_weights', type=int,
-                        default=0, choices=[0, 1])
-    parser.add_argument('--focal_loss', type=int, default=0, choices=[0, 1])
-    parser.add_argument('--gamma', type=float, default=2)
-    parser.add_argument('--alpha', type=float, default=None)
-
-    parser.add_argument('--schedule', type=int, default=3)
-    parser.add_argument('--patience', type=int, default=3)
-    parser.add_argument('--early_stopping', type=int,
-                        default=0, choices=[0, 1])
-    parser.add_argument('--checkpoint', type=int,
-                        choices=[0, 1], default=1)
     parser.add_argument('--workers', type=int, default=1)
-    parser.add_argument('--log_path', type=str, default='./logs/')
-    parser.add_argument('--log_every', type=int, default=100)
-    parser.add_argument('--flush_history', type=int,
-                        default=1, choices=[0, 1])
-    parser.add_argument('--output', type=str, default='./models/')
-    parser.add_argument('--model_name', type=str)
-
 
     parser.add_argument('--start_lr', type=float, default=1e-5)
     parser.add_argument('--end_lr', type=float, default=1e-2)
     parser.add_argument('--smoothing', type=float, default=0.05)
     parser.add_argument('--epochs', type=int, default=1)
-
 
     args = parser.parse_args()
     run(args)
