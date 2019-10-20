@@ -1,13 +1,16 @@
 import argparse
 import torch
-from src import utils
 import torch.nn.functional as F
-
+from src.model import CharacterLevelCNN
+from src import utils
 
 use_cuda = torch.cuda.is_available()
 
 def predict(args):
-    model = torch.load(args.model)
+    model = CharacterLevelCNN(args, args.number_of_classes)
+    state = torch.load(args.model)
+    model = model.load_state_dict(state)
+    
     processed_input = utils.preprocess_input(args)
     processed_input = torch.tensor(processed_input)
     processed_input = processed_input.unsqueeze(0)
@@ -24,7 +27,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         'Testing a pretrained Character Based CNN for text classification')
     parser.add_argument('--model', type=str, help='path for pre-trained model')
-
     parser.add_argument('--text', type=str,
                         default='I love pizza!', help='text string')
     parser.add_argument('--steps', nargs="+", default=['lower'])
@@ -35,6 +37,7 @@ if __name__ == "__main__":
     parser.add_argument('--number_of_characters', type=int, default=69)
     parser.add_argument('--extra_characters', type=str, default="éàèùâêîôûçëïü")
     parser.add_argument('--max_length', type=int, default=300)
+    parser.add_argument('--number_of_classes', type=int, default=2)
 
     args = parser.parse_args()
     prediction = predict(args)
