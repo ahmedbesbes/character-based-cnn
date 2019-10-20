@@ -16,6 +16,7 @@ def predict(args):
         model = model.to('cuda')
     prediction = model(processed_input)
     probabilities = F.softmax(prediction, dim=1)
+    probabilities = probabilities.cpu().numpy()
     return probabilities
 
 
@@ -30,12 +31,13 @@ if __name__ == "__main__":
 
     # arguments needed for the predicition
     parser.add_argument('--alphabet', type=str,
-                        default="""abcdefghijklmnopqrstuvwxyz0123456789,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}""")
-    parser.add_argument('--number_of_characters', type=int, default=68)
+                        default="abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+ =<>()[]{}")
+    parser.add_argument('--number_of_characters', type=int, default=69)
     parser.add_argument('--extra_characters', type=str)
-    parser.add_argument('--max_length', type=int, default=150)
+    parser.add_argument('--max_length', type=int, default=300)
 
     args = parser.parse_args()
     prediction = predict(args)
+    
     print('input : {}'.format(args.text))
     print('prediction : {}'.format(prediction))
