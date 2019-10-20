@@ -33,7 +33,7 @@ if __name__ == "__main__":
     parser.add_argument('--alphabet', type=str,
                         default="abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+ =<>()[]{}")
     parser.add_argument('--number_of_characters', type=int, default=69)
-    parser.add_argument('--extra_characters', type=str)
+    parser.add_argument('--extra_characters', type=str, default="éàèùâêîôûçëïü")
     parser.add_argument('--max_length', type=int, default=300)
 
     args = parser.parse_args()
