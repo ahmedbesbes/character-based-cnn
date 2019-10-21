@@ -90,6 +90,7 @@ class CharacterLevelCNN(nn.Module):
     # forward
 
     def forward(self, x):
+        x = nn.Dropout2d(0.1)(x)
         x = x.transpose(1, 2)
         x = self.conv1(x)
         x = self.conv2(x)
@@ -102,3 +103,4 @@ class CharacterLevelCNN(nn.Module):
         x = self.fc2(x)
         x = self.fc3(x)
         return x
+
