@@ -32,8 +32,8 @@ def load_data(args):
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
-        aux_df = aux_df[(aux_df[args.text_column].map(len) > 3)
-                        & (aux_df[args.text_column].map(len) < 600)]
+        aux_df = aux_df[(aux_df[args.text_column].map(len) > 3)]
+                        # & (aux_df[args.text_column].map(len) < 600)]
         aux_df['processed_text'] = (aux_df[args.text_column]
                                     .map(lambda text: utils.process_text(args.steps, text)))
         texts += aux_df['processed_text'].tolist()
