@@ -72,7 +72,7 @@ class CharacterLevelCNN(nn.Module):
         for module in self.modules():
             if isinstance(module, nn.Conv1d) or isinstance(module, nn.Linear):
                 # module.weight.data.normal_(mean, std)
-                nn.init.xavier_normal_(module.weight.data)
+                nn.init.normal_(module.weight.data)
                 if module.bias is not None:
                     nn.init.normal_(module.bias.data)
 
