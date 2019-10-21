@@ -32,7 +32,7 @@ def load_data(args):
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
-        aux_df = aux_df[(aux_df[args.text_column].map(len) > 5)
+        aux_df = aux_df[(aux_df[args.text_column].map(len) > 3)
                         & (aux_df[args.text_column].map(len) < 600)]
         aux_df['processed_text'] = (aux_df[args.text_column]
                                     .map(lambda text: utils.process_text(args.steps, text)))
@@ -51,13 +51,13 @@ def load_data(args):
         '''
 
         clean_data = [(text, label) for (text, label) in zip(
-            texts, labels) if label not in [3, 4]]
+            texts, labels) if label not in [3]]
 
         texts = [text for (text, label) in clean_data]
         labels = [label for (text, label) in clean_data]
 
         labels = list(
-            map(lambda l: {1: 0, 2: 0, 5: 1}[l], labels))
+            map(lambda l: {1: 0, 2: 0, 4:1, 5: 1}[l], labels))
 
         count_minority = labels.count(0)
 
