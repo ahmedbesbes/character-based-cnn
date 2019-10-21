@@ -64,7 +64,7 @@ class CharacterLevelCNN(nn.Module):
 
         # initialize weights
 
-        # self._create_weights()
+        self._create_weights()
 
     # utility private functions
 
@@ -72,7 +72,7 @@ class CharacterLevelCNN(nn.Module):
         for module in self.modules():
             if isinstance(module, nn.Conv1d) or isinstance(module, nn.Linear):
                 module.weight.data.normal_(mean, std)
-                
+
 
     def _get_conv_output(self, shape):
         x = torch.rand(shape)
