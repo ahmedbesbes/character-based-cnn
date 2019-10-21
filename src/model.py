@@ -64,7 +64,7 @@ class CharacterLevelCNN(nn.Module):
 
         # initialize weights
 
-        self._create_weights()
+        # self._create_weights()
 
     # utility private functions
 
