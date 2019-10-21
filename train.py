@@ -203,7 +203,7 @@ def run(args, both_cases=False):
 
     validation_params = {"batch_size": batch_size,
                          "shuffle": False,
-                         "num_workers": args.workers, 
+                         "num_workers": args.workers,
                          "drop_last": True}
 
     texts, labels, number_of_classes, sample_weights = load_data(args)
@@ -322,17 +322,18 @@ def run(args, both_cases=False):
             best_f1 = validation_f1
             best_epoch = epoch
             if args.checkpoint == 1:
-                torch.save(model, args.output + 'model_epoch_{}_maxlen_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(epoch,
-                                                                                                                 args.max_length,
-                                                                                                                 optimizer.state_dict()[
-                                                                                                                     'param_groups'][0]['lr'],
-                                                                                                                 round(
-                                                                                                                     validation_loss, 4),
-                                                                                                                 round(
-                                                                                                                     validation_accuracy, 4),
-                                                                                                                 round(
-                                                                                                                     validation_f1, 4)
-                                                                                                                 ))
+                torch.save(model.state_dict(), args.output + 'model_{}_epoch_{}_maxlen_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(args.model_name,
+                                                                                                                                  epoch,
+                                                                                                                                  args.max_length,
+                                                                                                                                  optimizer.state_dict()[
+                                                                                                                                      'param_groups'][0]['lr'],
+                                                                                                                                  round(
+                                                                                                                                      validation_loss, 4),
+                                                                                                                                  round(
+                                                                                                                                      validation_accuracy, 4),
+                                                                                                                                  round(
+                                                                                                                                      validation_f1, 4)
+                                                                                                                                  ))
 
         if bool(args.early_stopping):
             if epoch - best_epoch > args.patience > 0:
@@ -393,7 +394,7 @@ if __name__ == "__main__":
     parser.add_argument('--flush_history', type=int,
                         default=1, choices=[0, 1])
     parser.add_argument('--output', type=str, default='./models/')
-    parser.add_argument('--model_name', type=str)
+    parser.add_argument('--model_name', type=str, default='')
 
     args = parser.parse_args()
     run(args)
