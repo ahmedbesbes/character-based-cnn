@@ -208,8 +208,6 @@ def run(args, both_cases=False):
 
     texts, labels, number_of_classes, sample_weights = load_data(args)
 
-    print(f'5 first comments : {texts[:5]}')
-
     train_texts, val_texts, train_labels, val_labels, train_sample_weights, _ = train_test_split(texts,
                                                                                                  labels,
                                                                                                  sample_weights,
