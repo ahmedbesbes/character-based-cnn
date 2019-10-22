@@ -9,6 +9,8 @@ class CharacterLevelCNN(nn.Module):
 
         # define conv layers
 
+        self.dropout_input = nn.Dropout2d(args.dropout_input)
+
         self.conv1 = nn.Sequential(nn.Conv1d(args.number_of_characters + len(args.extra_characters),
                                              256,
                                              kernel_size=7,
@@ -90,7 +92,7 @@ class CharacterLevelCNN(nn.Module):
     # forward
 
     def forward(self, x):
-        x = nn.Dropout2d(0.1)(x)
+        x = self.dropout_input(x)
         x = x.transpose(1, 2)
         x = self.conv1(x)
         x = self.conv2(x)
