@@ -31,6 +31,7 @@ def load_data(args):
     labels = []
     for df_chunk in tqdm(chunks):
         aux_df = df_chunk.copy()
+        aux_df = aux_df.sample(frac=1)
         aux_df = aux_df[~aux_df[args.text_column].isnull()]
         aux_df = aux_df[(aux_df[args.text_column].map(len) > 3)]
                         # & (aux_df[args.text_column].map(len) < 600)]
