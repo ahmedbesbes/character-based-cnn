@@ -365,8 +365,8 @@ if __name__ == "__main__":
     parser.add_argument('--encoding', type=str, default='utf-8')
     parser.add_argument('--sep', type=str, default=',')
     parser.add_argument('--steps', nargs='+', default=['lower'])
-    parser.add_argument('--group_labels', type=str,
-                        default=None, choices=[None, 'binarize'])
+    parser.add_argument('--group_labels', type=int, default=1, choices=[0, 1])
+    parser.add_argument('--ignore_center', type=int, default=1, choices=[0, 1])
     parser.add_argument('--ratio', type=float, default=1)
     parser.add_argument('--balance', type=int, default=0, choices=[0, 1])
     parser.add_argument('--use_sampler', type=int,
