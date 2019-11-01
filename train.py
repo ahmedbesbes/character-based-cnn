@@ -78,6 +78,13 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
         lr = optimizer.state_dict()["param_groups"][0]["lr"]
 
         if (iter % print_every == 0) and (iter > 0):
+            intermediate_report = classification_report(
+                y_true, y_pred, output_dict=True)
+
+            f1_by_class = 'F1 Scores by class: '
+            for class_name in intermediate_report:
+                f1_by_class += f"{class_name} : {np.round(intermediate_report[class_name]['f1-score'], 4)} |"
+
             print("[Training - Epoch: {}], LR: {} , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
                 epoch + 1,
                 lr,
@@ -86,6 +93,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 losses.avg,
                 accuracies.avg
             ))
+            print(f1_by_class)
 
     f1_train = f1_score(y_true, y_pred, average='weighted')
 
@@ -321,17 +329,17 @@ def run(args, both_cases=False):
             best_epoch = epoch
             if args.checkpoint == 1:
                 torch.save(model.state_dict(), args.output + 'model_{}_epoch_{}_maxlen_{}_lr_{}_loss_{}_acc_{}_f1_{}.pth'.format(args.model_name,
-                                                                                                                                  epoch,
-                                                                                                                                  args.max_length,
-                                                                                                                                  optimizer.state_dict()[
-                                                                                                                                      'param_groups'][0]['lr'],
-                                                                                                                                  round(
-                                                                                                                                      validation_loss, 4),
-                                                                                                                                  round(
-                                                                                                                                      validation_accuracy, 4),
-                                                                                                                                  round(
-                                                                                                                                      validation_f1, 4)
-                                                                                                                                  ))
+                                                                                                                                 epoch,
+                                                                                                                                 args.max_length,
+                                                                                                                                 optimizer.state_dict()[
+                                                                                                                                     'param_groups'][0]['lr'],
+                                                                                                                                 round(
+                                                                                                                                     validation_loss, 4),
+                                                                                                                                 round(
+                                                                                                                                     validation_accuracy, 4),
+                                                                                                                                 round(
+                                                                                                                                     validation_f1, 4)
+                                                                                                                                 ))
 
         if bool(args.early_stopping):
             if epoch - best_epoch > args.patience > 0:
