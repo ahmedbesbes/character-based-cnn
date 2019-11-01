@@ -52,7 +52,7 @@ def load_data(args):
             labels = [label for (text, label) in clean_data]
 
             labels = list(
-                map(lambda l: {1: 0, 2: 0, 4: 2, 5: 2}[l], labels))
+                map(lambda l: {1: 0, 2: 0, 4: 1, 5: 1}[l], labels))
 
         else:
             labels = list(
@@ -80,7 +80,7 @@ def load_data(args):
     print(
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
     print('Distribution of the classes', Counter(labels))
-    
+
     sample_weights = get_sample_weights(labels)
 
     return texts, labels, number_of_classes, sample_weights
