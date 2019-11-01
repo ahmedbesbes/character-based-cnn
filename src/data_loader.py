@@ -79,7 +79,8 @@ def load_data(args):
 
     print(
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
-
+    print('Distribution of the classes', Counter(labels))
+    
     sample_weights = get_sample_weights(labels)
 
     return texts, labels, number_of_classes, sample_weights
