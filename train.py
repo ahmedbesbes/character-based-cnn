@@ -82,8 +82,8 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 y_true, y_pred, output_dict=True)
 
             f1_by_class = 'F1 Scores by class: '
+            print(intermediate_report)
             for class_name in intermediate_report.keys():
-                print(class_name)
                 f1_by_class += f"{class_name} : {np.round(intermediate_report[class_name]['f1-score'], 4)} |"
 
             print("[Training - Epoch: {}], LR: {} , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
