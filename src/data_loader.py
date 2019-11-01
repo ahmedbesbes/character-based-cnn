@@ -51,14 +51,14 @@ def load_data(args):
 
         '''
 
-        clean_data = [(text, label) for (text, label) in zip(
-            texts, labels) if label not in [3]]
+        # clean_data = [(text, label) for (text, label) in zip(
+        #     texts, labels) if label not in [3]]
 
-        texts = [text for (text, label) in clean_data]
-        labels = [label for (text, label) in clean_data]
+        # texts = [text for (text, label) in clean_data]
+        # labels = [label for (text, label) in clean_data]
 
         labels = list(
-            map(lambda l: {1: 0, 2: 0, 4:1, 5: 1}[l], labels))
+            map(lambda l: {1: 0, 2: 0, 3:1, 4:2, 5: 2}[l], labels))
 
         count_minority = labels.count(0)
 
@@ -74,8 +74,8 @@ def load_data(args):
 
     number_of_classes = len(set(labels))
 
-    if number_of_classes > 2:
-        labels = [label - 1 for label in labels]
+    # if number_of_classes > 2:
+    #     labels = [label - 1 for label in labels]
 
     print(
         f'data loaded successfully with {len(texts)} rows and {number_of_classes} labels')
