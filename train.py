@@ -23,7 +23,7 @@ from src.model import CharacterLevelCNN
 from src.focal_loss import FocalLoss
 
 
-def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, scheduler, args, print_every=25):
+def train(model, training_generator, optimizer, criterion, epoch, writer, log_file, scheduler, class_names, args, print_every=25):
     model.train()
     losses = utils.AverageMeter()
     accuracies = utils.AverageMeter()
@@ -82,8 +82,7 @@ def train(model, training_generator, optimizer, criterion, epoch, writer, log_fi
                 y_true, y_pred, output_dict=True)
 
             f1_by_class = 'F1 Scores by class: '
-            print(intermediate_report)
-            for class_name in intermediate_report.keys():
+            for class_name in class_names:
                 f1_by_class += f"{class_name} : {np.round(intermediate_report[class_name]['f1-score'], 4)} |"
 
             print("[Training - Epoch: {}], LR: {} , Iteration: {}/{} , Loss: {}, Accuracy: {}".format(
@@ -217,6 +216,9 @@ def run(args, both_cases=False):
 
     texts, labels, number_of_classes, sample_weights = load_data(args)
 
+    class_names = sorted(list(set(labels)))
+    class_names = [str(class_name) for class_name in class_names]
+
     train_texts, val_texts, train_labels, val_labels, train_sample_weights, _ = train_test_split(texts,
                                                                                                  labels,
                                                                                                  sample_weights,
@@ -298,6 +300,7 @@ def run(args, both_cases=False):
                                                            writer,
                                                            log_file,
                                                            scheduler,
+                                                           class_names,
                                                            args,
                                                            args.log_every)
 
