@@ -367,6 +367,8 @@ if __name__ == "__main__":
     parser.add_argument('--steps', nargs='+', default=['lower'])
     parser.add_argument('--group_labels', type=int, default=1, choices=[0, 1])
     parser.add_argument('--ignore_center', type=int, default=1, choices=[0, 1])
+    parser.add_argument('--label_ignored', type=int, default=None)
+
     parser.add_argument('--ratio', type=float, default=1)
     parser.add_argument('--balance', type=int, default=0, choices=[0, 1])
     parser.add_argument('--use_sampler', type=int,
