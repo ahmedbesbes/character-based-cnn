@@ -1,71 +1,49 @@
 {
-    "alphabet": {
-        "en": {
-            "lower": {
-                "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
-                "number_of_characters": 69
-            },
-            "both": {
-                "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
-                "number_of_characters": 95
-            }
-        }
-    },
-
-    "model_parameters": {
-        "small": {
-            "conv": [
-                [
-                    256,
-                    7,
-                    3
-                ],
-                [
-                    256,
-                    7,
-                    3
-                ],
-                [
-                    256,
-                    3,
-                    -1
-                ],
-                [
-                    256,
-                    3,
-                    -1
-                ],
-                [
-                    256,
-                    3,
-                    -1
-                ],
-                [
-                    256,
-                    3,
-                    3
-                ]
-            ],
-            "fc": [
-                1024,
-                1024
-            ]
-        }
-    },
-    "data": {
-        "text_column": "SentimentText",
-        "label_column": "Sentiment",
-        "max_length": 150,
-        "num_of_classes": 2,
-        "encoding": null,
-        "chunksize": 50000,
-        "max_rows": 100000,
-        "preprocessing_steps": ["lower", "remove_hashtags", "remove_urls", "remove_user_mentions"]
-    },
-    "training": {
-        "batch_size": 128,
-        "learning_rate": 0.01,
-        "epochs": 10,
-        "optimizer": "sgd"
+  "alphabet": {
+    "en": {
+      "lower": {
+        "alphabet": "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
+        "number_of_characters": 69
+      },
+      "both": {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}",
+        "number_of_characters": 95
+      }
     }
+  },
+
+  "model_parameters": {
+    "small": {
+      "conv": [
+        [256, 7, 3],
+        [256, 7, 3],
+        [256, 3, -1],
+        [256, 3, -1],
+        [256, 3, -1],
+        [256, 3, 3]
+      ],
+      "fc": [1024, 1024]
+    }
+  },
+  "data": {
+    "text_column": "SentimentText",
+    "label_column": "Sentiment",
+    "max_length": 150,
+    "num_of_classes": 2,
+    "encoding": null,
+    "chunksize": 50000,
+    "max_rows": 100000,
+    "preprocessing_steps": [
+      "lower",
+      "remove_hashtags",
+      "remove_urls",
+      "remove_user_mentions"
+    ]
+  },
+  "training": {
+    "batch_size": 128,
+    "learning_rate": 0.01,
+    "epochs": 10,
+    "optimizer": "sgd"
+  }
 }
